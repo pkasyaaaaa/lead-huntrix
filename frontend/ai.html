@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Prospect Finder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Global Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff; 
+            display: flex;
+            height: 100vh;
+        }
+
+        /* --- Custom Scrollbar --- */
+        .sidebar, .filter-group-content {
+            scrollbar-width: thin;
+            scrollbar-color: #ccc #f0f0f0;
+        }
+        .sidebar::-webkit-scrollbar, .filter-group-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .sidebar::-webkit-scrollbar-thumb, .filter-group-content::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 4px;
+        }
+        .sidebar::-webkit-scrollbar-track, .filter-group-content::-webkit-scrollbar-track {
+            background: #f0f0f0;
+        }
+        
+        /* --- Sidebar Container --- */
+        .sidebar {
+            width: 300px;
+            background-color: #ffffff;
+            border-right: 1px solid #e0e0e0;
+            padding: 20px 0;
+            overflow-y: auto;
+            transition: width 0.3s ease, padding 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0; 
+        }
+
+        .toggle-btn { display: none; }
+
+        .logo {
+            font-size: 28px;
+            font-family: 'Brush Script MT', cursive; 
+            font-weight: 400;
+            padding: 0 20px;
+            margin-bottom: 25px;
+            color: #333;
+            text-align: center;
+        }
+
+        /* Top Menu Item Styles */
+        .menu-item {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 15px 20px;
+            font-weight: 500;
+            color: #333;
+            user-select: none;
+            gap: 15px;
+            transition: background-color 0.2s;
+        }
+        .menu-item:not(.prospect-finder-menu):hover { background-color: #f7f7f7; }
+
+        /* Separator lines for top-level menu groups */
+        .top-level-group { border-top: 1px solid #e0e0e0; }
+
+        /* Icon styling */
+        .menu-item .icon {
+            width: 20px;
+            font-size: 18px;
+            text-align: center;
+            color: #666;
+        }
+
+        .menu-item .chevron, .menu-item .arrow {
+            margin-left: auto;
+            font-size: 14px;
+            color: #999;
+            transition: transform 0.3s ease;
+        }
+
+        /* Prospect Finder Section Styling */
+        .prospect-finder-menu {
+            font-weight: 600; 
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 0;
+        }
+        .prospect-finder-menu.expanded .chevron { transform: rotate(0deg); }
+        .prospect-finder-menu .chevron { font-size: 16px; }
+
+        .filter-group-content {
+            max-height: 500px; 
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: max-height 0.3s ease-out;
+            border-bottom: 1px solid #e0e0e0; 
+            padding-bottom: 5px; 
+        }
+        .prospect-finder-menu:not(.expanded) + .filter-group-content { border-bottom: none; }
+        
+
+        /* Individual Filter Item Styles (Nested) */
+        .filter-item {
+            padding: 12px 20px;
+            cursor: default; 
+            display: flex;
+            gap: 15px;
+            align-items: flex-start; /* Align icon to the top of the content */
+            border-bottom: 1px solid #f0f0f0; 
+        }
+        .filter-item:last-child { border-bottom: none; }
+
+        .filter-item .icon { font-size: 13px; margin-top: 2px; }
+
+        .filter-item-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 35px; /* Ensure consistent height */
+        }
+
+        .filter-item-content label {
+            display: block;
+            font-size: 13px;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        
+        /* Chip Container for Job Title/Location filters */
+        .chip-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 5px;
+            width: 100%;
+            border: 1px solid #ddd; /* Added border for better visibility of input area */
+            border-radius: 4px;
+            padding: 3px 6px; /* Padding for input area */
+        }
+
+        /* Chip Styling */
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            background-color: #e0e7ff; /* Light blue background */
+            color: #004499;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 1px;
+            height: 24px; /* Consistent height for chip */
+        }
+
+        .chip-delete {
+            margin-left: 5px;
+            cursor: pointer;
+            font-size: 10px;
+            color: #004499;
+            transition: color 0.2s;
+        }
+        .chip-delete:hover {
+            color: #c00;
+        }
+
+        /* Input/Select styling adjusted for chip container */
+        .filter-item-content input, .filter-item-content select {
+            border: none;
+            padding: 0;
+            font-size: 13px;
+            color: #999;
+            background: transparent;
+            outline: none;
+            cursor: text;
+            flex-grow: 1;
+            min-width: 50px; /* Ensure input field is visible */
+            height: 24px; /* Match chip height */
+        }
+
+        /* Style for the input field inside the chip container */
+        .chip-container input {
+            border: none;
+            padding: 0;
+            font-size: 12px;
+            color: #333; /* Darker color for active input */
+            min-width: 100px;
+        }
+        .chip-container:focus-within {
+             border-color: #999; /* Subtle focus effect */
+        }
+        
+        /* Select fields that are NOT converted to chips yet */
+        .filter-item-content select {
+            cursor: pointer; 
+            border: 1px solid #ddd; /* Border for remaining select fields */
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: #333;
+        }
+        .filter-item-content select:disabled {
+             background-color: #f7f7f7;
+             color: #999;
+        }
+
+
+        /* Bottom Links Group */
+        .bottom-links { margin-top: 0; flex-shrink: 0; }
+        .bottom-links .menu-item { border-top: none; }
+        .bottom-links .menu-item:last-child { border-bottom: 1px solid #e0e0e0; }
+
+        /* --- Main Content --- */
+        .main-content {
+            flex: 1;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #ffffff; 
+        }
+
+        .search-container {
+            width: 100%;
+            max-width: 700px; 
+            margin-bottom: 80px;
+            padding-top: 50px;
+        }
+
+        .search-title {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 110px;
+            margin-bottom: 25px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .info-icon {
+            font-size: 16px;
+            color: #999;
+            cursor: help;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background-color: #ffffff;
+            border: 1px solid #ccc; 
+            border-radius: 25px; 
+            padding: 12px 25px;
+            gap: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); 
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            color: #666;
+        }
+
+        .search-box .search-icon {
+            color: #999;
+            font-size: 18px;
+        }
+
+        .search-box .clear-btn {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+            transition: color 0.2s;
+        }
+        .search-box .clear-btn:hover { color: #333; }
+
+        .suggestions-container {
+            width: 100%;
+            max-width: 650px;
+            text-align: center;
+        }
+
+        .suggestions-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .suggestions-grid {
+            display: flex;
+            flex-direction: column; 
+            gap: 10px;
+            width: 100%;
+        }
+
+        .suggestion-card {
+            padding: 12px 20px;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center; 
+            color: #333;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .suggestion-card:hover {
+            border-color: #888;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="logo">Logo</div>
+
+        <div class="prospect-finder-wrapper top-level-group">
+            <div class="menu-item prospect-finder-menu expanded" id="prospectFinderMenu">
+                <span class="icon"><i class="fas fa-users"></i></span>
+                <span>Prospect Finder</span>
+                <span class="chevron"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            
+            <div class="filter-group-content" id="prospectFilterContent">
+                
+                <div class="filter-item">
+                    <span class="icon"><i class="fas fa-user-tie"></i></span>
+                    <div class="filter-item-content">
+                        <label>Job title</label>
+                        <div class="chip-container" id="jobTitleChips">
+                            <input type="text" id="jobTitleInput" placeholder="Enter one or more job titles">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-item">
+                    <span class="icon"><i class="fas fa-list-ol"></i></span>
+                    <div class="filter-item-content">
+                        <label>Management Level</label>
+                        <div class="chip-container" id="managementLevelChips">
+                            <input type="text" list="managementLevelOptions" id="managementLevelInput" placeholder="Select management level">
+                            <datalist id="managementLevelOptions">
+                                <option value="Entry Level"></option>
+                                <option value="Manager"></option>
+                                <option value="Director"></option>
+                                <option value="VP"></option>
+                                <option value="C-Level"></option>
+                            </datalist>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-item">
+                    <span class="icon"><i class="fas fa-building"></i></span>
+                    <div class="filter-item-content">
+                        <label>Department</label>
+                        <div class="chip-container" id="departmentChips">
+                            <input type="text" list="departmentOptions" id="departmentInput" placeholder="Select department">
+                            <datalist id="departmentOptions">
+                                <option value="Sales"></option>
+                                <option value="Marketing"></option>
+                                <option value="HR"></option>
+                                <option value="Finance"></option>
+                                <option value="Technology"></option>
+                            </datalist>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-item">
+                    <span class="icon"><i class="fas fa-map-marker-alt"></i></span>
+                    <div class="filter-item-content">
+                        <label>Location</label>
+                        <div class="chip-container" id="locationChips">
+                            <input type="text" id="locationInput" placeholder="Select prospect's location">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-item">
+                    <span class="icon"><i class="fas fa-industry"></i></span>
+                    <div class="filter-item-content">
+                        <label>Industry</label>
+                        <div class="chip-container" id="industryChips">
+                            <input type="text" list="industryOptions" id="industryInput" placeholder="Select industry">
+                            <datalist id="industryOptions">
+                                <option value="Technology"></option>
+                                <option value="Finance"></option>
+                                <option value="Healthcare"></option>
+                                <option value="Retail"></option>
+                                <option value="Design"></option>
+                            </datalist>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-item">
+                    <span class="icon"><i class="fas fa-bolt"></i></span>
+                    <div class="filter-item-content">
+                        <label>Skills</label>
+                        <div class="chip-container" id="skillsChips">
+                            <input type="text" id="skillsInput" placeholder="Enter Prospect Expertise">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-item">
+                    <span class="icon"><i class="fas fa-users-line"></i></span>
+                    <div class="filter-item-content">
+                        <label>Size</label>
+                        <select>
+                            <option disabled selected>Choose number of employees</option>
+                            <option>1-50</option>
+                            <option>51-200</option>
+                            <option>201-1000</option>
+                            <option>1000+</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filter-item">
+                    <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                    <div class="filter-item-content">
+                        <label>Founded</label>
+                        <input type="text" placeholder="Select founding date range (e.g., 2010-Present)">
+                    </div>
+                </div>
+                
+                <div class="filter-item">
+                    <span class="icon"><i class="fas fa-dollar-sign"></i></span>
+                    <div class="filter-item-content">
+                        <label>Revenue</label>
+                        <select>
+                            <option disabled selected>Select company's revenue range</option>
+                            <option>$1M - $10M</option>
+                            <option>$10M - $100M</option>
+                            <option>$100M - $1B</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bottom-links top-level-group">
+            <div class="menu-item">
+                <span class="icon"><i class="fas fa-chart-bar"></i></span>
+                <span>Market Analysis</span>
+                <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+            </div>
+            <div class="menu-item">
+                <span class="icon"><i class="fas fa-list-ul"></i></span>
+                <span>Your Prospect list</span>
+                <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+            </div>
+        </div>
+
+        <button class="toggle-btn" id="toggleBtn"><i class="fas fa-chevron-left"></i></button>
+    </div>
+
+    <div class="main-content">
+        <div class="search-container">
+            <div class="search-title">
+                Keyword Search to find your lead 
+                <span class="info-icon" title="Search for prospects using keywords"><i class="fas fa-info-circle"></i></span>
+            </div>
+            <div class="search-box">
+                <span class="search-icon"><i class="fas fa-search"></i></span>
+                <input type="text" id="mainSearchInput" placeholder="Try any keyword and explore related companies & staff">
+                <button class="clear-btn" id="clearSearchBtn"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+
+        <div class="suggestions-container">
+            <div class="suggestions-title">AI-powered search suggestions</div>
+            <div class="suggestions-grid">
+                <div class="suggestion-card">I want to promote my new HR training program.</div>
+                <div class="suggestion-card">Who should I target for my new handmade clothes?</div>
+                <div class="suggestion-card">Help me find people interested in solar installation services.</div>
+                <div class="suggestion-card">Target the audience that are interested in maid services</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const prospectFinderMenu = document.getElementById('prospectFinderMenu');
+            const prospectFilterContent = document.getElementById('prospectFilterContent');
+            const prospectChevron = prospectFinderMenu.querySelector('.chevron i');
+            const mainSearchInput = document.getElementById('mainSearchInput');
+            const clearSearchBtn = document.getElementById('clearSearchBtn');
+            const suggestionCards = document.querySelectorAll('.suggestion-card');
+            
+            // --- Elements for Chip Logic ---
+            const filterChips = [
+                { input: document.getElementById('jobTitleInput'), container: document.getElementById('jobTitleChips') },
+                { input: document.getElementById('locationInput'), container: document.getElementById('locationChips') },
+                { input: document.getElementById('managementLevelInput'), container: document.getElementById('managementLevelChips') },
+                { input: document.getElementById('departmentInput'), container: document.getElementById('departmentChips') },
+                { input: document.getElementById('industryInput'), container: document.getElementById('industryChips') },
+                { input: document.getElementById('skillsInput'), container: document.getElementById('skillsChips') },
+            ];
+
+            // --- Helper Function: Create and Add Chip ---
+            const addChip = (container, value, inputField) => {
+                const trimmedValue = value.trim();
+                if (trimmedValue === '') return;
+
+                // Check for duplicates (simple check for demo)
+                const existingChips = Array.from(container.querySelectorAll('.chip')).map(c => c.textContent.replace(' ×', '').trim().toLowerCase());
+                if (existingChips.includes(trimmedValue.toLowerCase())) {
+                    inputField.value = '';
+                    return; 
+                }
+
+                const chip = document.createElement('div');
+                chip.classList.add('chip');
+                // Use 'x' symbol as shown in the image
+                chip.innerHTML = `${trimmedValue} <span class="chip-delete"><i class="fas fa-times"></i></span>`; 
+                
+                const deleteBtn = chip.querySelector('.chip-delete');
+                deleteBtn.addEventListener('click', () => {
+                    container.removeChild(chip);
+                    inputField.focus(); 
+                });
+
+                // Insert the chip before the input field
+                container.insertBefore(chip, inputField);
+                inputField.value = '';
+                inputField.focus();
+            };
+
+            // --- 1. Universal Filter Chip Logic ---
+            filterChips.forEach(({ input, container }) => {
+                input.addEventListener('keydown', (e) => {
+                    // Trigger chip creation on Enter or comma
+                    if (e.key === 'Enter' || e.key === ',') {
+                        e.preventDefault(); 
+                        addChip(container, input.value.replace(',', ''), input);
+                    }
+                });
+                
+                // Allow chip creation on blur if text is present
+                input.addEventListener('blur', () => {
+                    if (input.value.trim() !== '') {
+                        addChip(container, input.value, input);
+                    }
+                });
+            });
+
+
+            // --- 2. Prospect Finder Dropdown/Toggle Logic ---
+            
+            // Set initial state: Expanded (as per image)
+            prospectFinderMenu.classList.add('expanded');
+            prospectFilterContent.style.maxHeight = '1000px'; 
+            
+            prospectFinderMenu.addEventListener('click', () => {
+                const isExpanded = prospectFinderMenu.classList.toggle('expanded');
+                
+                if (isExpanded) {
+                    prospectFilterContent.style.maxHeight = prospectFilterContent.scrollHeight + 'px'; // Set to actual height
+                    prospectChevron.classList.replace('fa-chevron-right', 'fa-chevron-down');
+                } else {
+                    prospectFilterContent.style.maxHeight = '0';
+                    prospectChevron.classList.replace('fa-chevron-down', 'fa-chevron-right');
+                }
+            });
+
+            // --- 3. Search Bar Clear Logic ---
+            clearSearchBtn.addEventListener('click', () => {
+                mainSearchInput.value = '';
+                mainSearchInput.focus();
+            });
+
+            // --- 4. Suggestion Card Click Logic ---
+            suggestionCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    mainSearchInput.value = card.textContent;
+                    mainSearchInput.focus();
+                });
+            });
+            
+            // --- DEMO CHIPS ---
+            // Re-adding initial chips for demonstration, using the new function
+            addChip(document.getElementById('jobTitleChips'), 'designer', document.getElementById('jobTitleInput'));
+            addChip(document.getElementById('jobTitleChips'), 'fashion designer', document.getElementById('jobTitleInput'));
+            addChip(document.getElementById('jobTitleChips'), 'interior designer', document.getElementById('jobTitleInput'));
+            addChip(document.getElementById('locationChips'), 'Kuala Lumpur', document.getElementById('locationInput'));
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Lead Hunter</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            background: #fff;
+            color: #222;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        .center {
+            text-align: center;
+        }
+        .hero {
+            margin-top: 32px;
+            margin-bottom: 32px;
+        }
+        .hero-buttons {
+            margin-top: 24px;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+        .hero-buttons button {
+            padding: 12px 32px;
+            border-radius: 6px;
+            border: 1px solid #222;
+            background: #fff;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .hero-buttons button:last-child {
+            background: #222;
+            color: #fff;
+        }
+        .image-placeholder {
+            width: 100%;
+            max-width: 700px;
+            height: 260px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            margin: 32px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .image-placeholder img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            opacity: 0.5;
+        }
+        .section-title {
+            margin-top: 48px;
+            text-align: center;
+            font-size: 1.2rem;
+            color: #888;
+        }
+        .main-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        .steps {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin-top: 32px;
+            margin-bottom: 32px;
+        }
+        .step-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            width: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 12px 0 12px;
+        }
+        .step-card h3 {
+            font-size: 1.1rem;
+            margin: 8px 0 8px 0;
+        }
+        .step-card p {
+            font-size: 0.95rem;
+            color: #555;
+            margin-bottom: 16px;
+        }
+        .step-card .image-placeholder {
+            height: 80px;
+            max-width: 100px;
+            margin-bottom: 16px;
+        }
+        .step-card .discover {
+            color: #222;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .cta-section {
+            background: #222;
+            color: #fff;
+            padding: 40px 0;
+            text-align: center;
+            margin: 48px 0 0 0;
+        }
+        .cta-section .hero-buttons button {
+            border: 1px solid #fff;
+            background: #fff;
+            color: #222;
+        }
+        .cta-section .hero-buttons button:last-child {
+            background: #222;
+            color: #fff;
+            border: 1px solid #fff;
+        }
+        .footer {
+            background: #f8f8f8;
+            padding: 32px 0 0 0;
+            margin-top: 0;
+        }
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+        .footer-links {
+            display: flex;
+            gap: 48px;
+        }
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+        .footer-social {
+            margin-top: 16px;
+            display: flex;
+            gap: 16px;
+        }
+        .footer-bottom {
+            text-align: center;
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 24px;
+            padding-bottom: 16px;
+        }
+        .footer-policy {
+            text-align: center;
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+        @media (max-width: 800px) {
+            .steps {
+                flex-direction: column;
+                align-items: center;
+            }
+            .footer-content {
+                flex-direction: column;
+                gap: 24px;
+            }
+            .footer-links {
+                flex-direction: column;
+                gap: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero center">
+            <h1>Find premium<br>prospects in minutes</h1>
+            <p>Elite Lead Hunter uses advanced lists to identify and qualify your ideal prospects. Build targeted lists, send personalised outreach, and close deals faster than ever before.</p>
+            <div class="hero-buttons">
+                <button>Start free</button>
+                <button>Book a demo →</button>
+            </div>
+        </div>
+        <div class="image-placeholder">
+            <img src="image.png" alt="Main image placeholder">
+        </div>
+        <div class="section-title">Process</div>
+        <div class="main-title">How it works</div>
+        <div class="steps">
+            <div class="step-card">
+                <div style="color:#888; font-size:0.9rem;">Search</div>
+                <h3>Define your ideal prospect</h3>
+                <p>Set your criteria to get the best matching leads for your industry.</p>
+                <div class="discover">Discover →</div>
+                <div class="image-placeholder">
+                    <img src="image1.png" alt="Step 1 image placeholder">
+                </div>
+            </div>
+            <div class="step-card">
+                <div style="color:#888; font-size:0.9rem;">Source</div>
+                <h3>Browse results and build lists</h3>
+                <p>Find and save prospects that match your criteria.</p>
+                <div class="discover">Discover →</div>
+                <div class="image-placeholder">
+                    <img src="image2.png" alt="Step 2 image placeholder">
+                </div>
+            </div>
+            <div class="step-card">
+                <div style="color:#888; font-size:0.9rem;">Outreach</div>
+                <h3>Send personalised Campaigns</h3>
+                <p>Engage your best prospects with targeted messaging.</p>
+                <div class="discover">Discover →</div>
+                <div class="image-placeholder">
+                    <img src="image3.png" alt="Step 3 image placeholder">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="cta-section">
+        <div class="main-title" style="color:#fff;">Ready to find your next deal</div>
+        <p>View detailed prospect profiles, get results fast, and scale your contact lists.</p>
+        <div class="hero-buttons">
+            <button>Start free</button>
+            <button>Book a demo →</button>
+        </div>
+    </div>
+    <div class="footer">
+        <div class="footer-content">
+            <div>
+                <div class="footer-logo">Logo</div>
+                <div style="margin-bottom:16px;">Stay connected with<br>Elite Lead Hunter</div>
+                <div style="color:#555; font-size:0.95rem; margin-bottom:16px;">Get the latest updates on prospecting tools and industry insights delivered monthly.</div>
+                <div class="hero-buttons" style="justify-content:flex-start;">
+                    <button>Explore</button>
+                    <button>Contact</button>
+                </div>
+            </div>
+            <div class="footer-links">
+                <ul>
+                    <li>Home</li>
+                    <li>Sign Up</li>
+                    <li>Prospect Search</li>
+                    <li>Pricing</li>
+                    <li>Testimonials</li>
+                </ul>
+                <ul>
+                    <li>Email Outreach</li>
+                    <li>Campaign Details</li>
+                    <li>Download Sheet</li>
+                    <li>Prospect Results</li>
+                    <li>Contact Us</li>
+                </ul>
+            </div>
+            <div class="footer-social">
+                <span>○</span>
+                <span>○</span>
+                <span>○</span>
+                <span>○</span>
+            </div>
+        </div>
+        <div class="footer-bottom">©2025 Elite Lead Hunter. All rights reserved.</div>
+        <div class="footer-policy">Privacy Policy &nbsp; | &nbsp; Terms of Service &nbsp; | &nbsp; Cookie Settings</div>
+    </div>
+</body>
+</html>
