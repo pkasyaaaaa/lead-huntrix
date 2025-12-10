@@ -1,0 +1,18 @@
+{
+  "name": "lead-huntrix",
+  "version": "1.0.0",
+  "description": "Full-stack Lead Huntrix application",
+  "scripts": {
+    "install-all": "cd backend && npm install && cd ../client && npm install",
+    "server": "cd backend && npm run dev",
+    "client": "cd client && npm start",
+    "build": "cd client && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pkasyaaaaa/lead-huntrix.git"
+  },
+  "keywords": ["lead-generation", "prospect-finder", "market-analysis"],
+  "author": "",
+  "license": "ISC"
+}
