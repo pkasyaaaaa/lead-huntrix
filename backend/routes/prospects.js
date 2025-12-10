@@ -7,9 +7,9 @@ router.post('/sync-from-user-data', async (req, res) => {
   try {
     const userId = req.body.user_id || 1;
     
-    // Get data from user_data table
+    // Get data from prospect_data table
     const [userData] = await db.query(
-      'SELECT id, user_id, name, "JobTitle" FROM user_data WHERE user_id = $1',
+      'SELECT id, user_id, lusha_id, name, job_title, company_name, location, linkedin_url, email, phone_number FROM prospect_data WHERE user_id = $1',
       [userId]
     );
 
@@ -24,9 +24,9 @@ router.post('/sync-from-user-data', async (req, res) => {
       if (existing.length === 0) {
         // Insert into prospects
         await db.query(
-          `INSERT INTO prospects (user_id, user_data_id, name, job_title) 
-           VALUES (?, ?, ?, ?)`,
-          [record.user_id, record.id, record.name, record.JobTitle]
+          `INSERT INTO prospects (user_id, user_data_id, name, job_title, company_name, location, linkedin_url, email, phone_number) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [record.user_id, record.id, record.name, record.job_title, record.company_name, record.location, record.linkedin_url, record.email, record.phone_number]
         );
         synced++;
       }
@@ -59,7 +59,7 @@ router.get('/', async (req, res) => {
       search_query
     } = req.query;
 
-    let query = 'SELECT id, user_id, name, "JobTitle" FROM user_data WHERE user_id = $1';
+    let query = 'SELECT id, user_id, lusha_id, name, job_title, company_name, location, linkedin_url, email, phone_number FROM prospect_data WHERE user_id = $1';
     const params = [userId];
     let paramCount = 1;
 
@@ -67,7 +67,7 @@ router.get('/', async (req, res) => {
     if (job_titles) {
       const titles = job_titles.split(',');
       const placeholders = titles.map(() => `$${++paramCount}`).join(',');
-      query += ` AND "JobTitle" IN (${placeholders})`;
+      query += ` AND job_title IN (${placeholders})`;
       params.push(...titles);
     }
 
@@ -119,9 +119,9 @@ router.get('/', async (req, res) => {
     }
 
     if (search_query) {
-      query += ` AND (name LIKE $${++paramCount} OR "JobTitle" LIKE $${++paramCount})`;
+      query += ` AND (name LIKE $${++paramCount} OR job_title LIKE $${++paramCount} OR company_name LIKE $${++paramCount})`;
       const searchParam = `%${search_query}%`;
-      params.push(searchParam, searchParam);
+      params.push(searchParam, searchParam, searchParam);
     }
 
     query += ' ORDER BY id DESC';

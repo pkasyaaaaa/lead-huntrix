@@ -9,7 +9,9 @@ const ProspectListView = ({ userId }) => {
   const [selectAll, setSelectAll] = useState(false);
   const [filters, setFilters] = useState({
     prospect: '',
-    jobTitle: ''
+    jobTitle: '',
+    companyName: '',
+    location: ''
   });
 
   useEffect(() => {
@@ -59,11 +61,15 @@ const ProspectListView = ({ userId }) => {
 
   const filteredProspects = prospects.filter(prospect => {
     const prospectName = (prospect.name || '').toLowerCase();
-    const prospectTitle = (prospect.JobTitle || '').toLowerCase();
+    const prospectTitle = (prospect.job_title || '').toLowerCase();
+    const companyName = (prospect.company_name || '').toLowerCase();
+    const location = (prospect.location || '').toLowerCase();
 
     return (
       prospectName.includes(filters.prospect.toLowerCase()) &&
-      prospectTitle.includes(filters.jobTitle.toLowerCase())
+      prospectTitle.includes(filters.jobTitle.toLowerCase()) &&
+      companyName.includes(filters.companyName.toLowerCase()) &&
+      location.includes(filters.location.toLowerCase())
     );
   });
 
@@ -119,11 +125,6 @@ const ProspectListView = ({ userId }) => {
               </th>
               <th>
                 <div className="column-header">
-                  <span>ID</span>
-                </div>
-              </th>
-              <th>
-                <div className="column-header">
                   <span>Name</span>
                   <input
                     type="text"
@@ -146,6 +147,45 @@ const ProspectListView = ({ userId }) => {
                   />
                 </div>
               </th>
+              <th>
+                <div className="column-header">
+                  <span>Company Name</span>
+                  <input
+                    type="text"
+                    placeholder="Filter by company..."
+                    value={filters.companyName}
+                    onChange={(e) => handleFilterChange('companyName', e.target.value)}
+                    className="column-filter"
+                  />
+                </div>
+              </th>
+              <th>
+                <div className="column-header">
+                  <span>Location</span>
+                  <input
+                    type="text"
+                    placeholder="Filter by location..."
+                    value={filters.location}
+                    onChange={(e) => handleFilterChange('location', e.target.value)}
+                    className="column-filter"
+                  />
+                </div>
+              </th>
+              <th>
+                <div className="column-header">
+                  <span>LinkedIn</span>
+                </div>
+              </th>
+              <th>
+                <div className="column-header">
+                  <span>Email</span>
+                </div>
+              </th>
+              <th>
+                <div className="column-header">
+                  <span>Phone Number</span>
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -158,9 +198,19 @@ const ProspectListView = ({ userId }) => {
                     onChange={() => handleSelectProspect(prospect.id)}
                   />
                 </td>
-                <td>{prospect.id}</td>
                 <td>{prospect.name}</td>
-                <td>{prospect.JobTitle}</td>
+                <td>{prospect.job_title}</td>
+                <td>{prospect.company_name}</td>
+                <td>{prospect.location}</td>
+                <td>
+                  {prospect.linkedin_url ? (
+                    <a href={prospect.linkedin_url} target="_blank" rel="noopener noreferrer">
+                      {prospect.linkedin_url}
+                    </a>
+                  ) : '-'}
+                </td>
+                <td>{prospect.email ? (Array.isArray(prospect.email) ? prospect.email.join(', ') : prospect.email) : '-'}</td>
+                <td>{prospect.phone_number ? (Array.isArray(prospect.phone_number) ? prospect.phone_number.join(', ') : prospect.phone_number) : '-'}</td>
               </tr>
             ))}
           </tbody>
