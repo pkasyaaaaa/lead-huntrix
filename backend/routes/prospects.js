@@ -9,7 +9,7 @@ router.post('/sync-from-user-data', async (req, res) => {
     
     // Get data from user_data table
     const [userData] = await db.query(
-      'SELECT id, user_id, name, JobTitle FROM user_data WHERE user_id = ?',
+      'SELECT id, user_id, name, "JobTitle" FROM user_data WHERE user_id = $1',
       [userId]
     );
 
@@ -59,59 +59,67 @@ router.get('/', async (req, res) => {
       search_query
     } = req.query;
 
-    let query = 'SELECT id, user_id, name, JobTitle FROM user_data WHERE user_id = ?';
+    let query = 'SELECT id, user_id, name, "JobTitle" FROM user_data WHERE user_id = $1';
     const params = [userId];
+    let paramCount = 1;
 
     // Build dynamic WHERE clause based on filters
     if (job_titles) {
       const titles = job_titles.split(',');
-      query += ` AND JobTitle IN (${titles.map(() => '?').join(',')})`;
+      const placeholders = titles.map(() => `$${++paramCount}`).join(',');
+      query += ` AND "JobTitle" IN (${placeholders})`;
       params.push(...titles);
     }
 
     if (management_levels) {
       const levels = management_levels.split(',');
-      query += ` AND management_level IN (${levels.map(() => '?').join(',')})`;
+      const placeholders = levels.map(() => `$${++paramCount}`).join(',');
+      query += ` AND management_level IN (${placeholders})`;
       params.push(...levels);
     }
 
     if (departments) {
       const depts = departments.split(',');
-      query += ` AND department IN (${depts.map(() => '?').join(',')})`;
+      const placeholders = depts.map(() => `$${++paramCount}`).join(',');
+      query += ` AND department IN (${placeholders})`;
       params.push(...depts);
     }
 
     if (locations) {
       const locs = locations.split(',');
-      query += ` AND location IN (${locs.map(() => '?').join(',')})`;
+      const placeholders = locs.map(() => `$${++paramCount}`).join(',');
+      query += ` AND location IN (${placeholders})`;
       params.push(...locs);
     }
 
     if (industries) {
       const inds = industries.split(',');
-      query += ` AND industry IN (${inds.map(() => '?').join(',')})`;
+      const placeholders = inds.map(() => `$${++paramCount}`).join(',');
+      query += ` AND industry IN (${placeholders})`;
       params.push(...inds);
     }
 
     if (skills) {
-      query += ` AND skills LIKE ?`;
+      query += ` AND skills LIKE $${++paramCount}`;
       params.push(`%${skills}%`);
     }
 
     if (company_sizes) {
       const sizes = company_sizes.split(',');
-      query += ` AND company_size IN (${sizes.map(() => '?').join(',')})`;
+      const placeholders = sizes.map(() => `$${++paramCount}`).join(',');
+      query += ` AND company_size IN (${placeholders})`;
       params.push(...sizes);
     }
 
     if (revenue_ranges) {
       const ranges = revenue_ranges.split(',');
-      query += ` AND company_revenue IN (${ranges.map(() => '?').join(',')})`;
+      const placeholders = ranges.map(() => `$${++paramCount}`).join(',');
+      query += ` AND company_revenue IN (${placeholders})`;
       params.push(...ranges);
     }
 
     if (search_query) {
-      query += ` AND (name LIKE ? OR JobTitle LIKE ?)`;
+      query += ` AND (name LIKE $${++paramCount} OR "JobTitle" LIKE $${++paramCount})`;
       const searchParam = `%${search_query}%`;
       params.push(searchParam, searchParam);
     }
@@ -215,7 +223,7 @@ router.get('/suggestions/filters', async (req, res) => {
   try {
     const userId = req.query.user_id || 1;
     
-    const [jobTitles] = await db.query(
+    const [JobTitles] = await db.query(
       'SELECT DISTINCT job_title FROM prospects WHERE user_id = ? AND job_title IS NOT NULL', 
       [userId]
     );
@@ -231,7 +239,7 @@ router.get('/suggestions/filters', async (req, res) => {
     res.json({
       success: true,
       data: {
-        job_titles: jobTitles.map(row => row.job_title),
+        job_titles: JobTitles.map(row => row.job_title),
         locations: locations.map(row => row.location),
         industries: industries.map(row => row.industry)
       }
