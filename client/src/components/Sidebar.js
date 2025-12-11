@@ -92,7 +92,10 @@ const Sidebar = ({
       <div className="prospect-finder-wrapper">
         <div
           className={`menu-item prospect-finder-menu ${prospectFilterExpanded ? 'expanded' : ''} ${activeView === 'prospect-finder' ? 'active' : ''}`}
-          onClick={onToggleProspectFilter}
+          onClick={() => {
+            onViewChange('prospect-finder');
+            onToggleProspectFilter();
+          }}
         >
           <span className="icon"><i className="fas fa-users"></i></span>
           <span>Prospect Finder</span>
@@ -117,7 +120,7 @@ const Sidebar = ({
           </div>
 
           <div className="filter-item">
-            <span className="icon"><i className="fas fa-list-ol"></i></span>
+            <span className="icon"><i className="fas fa-sitemap"></i></span>
             <div className="filter-item-content">
               <label>Management Level</label>
               <ChipInput
@@ -129,7 +132,7 @@ const Sidebar = ({
           </div>
 
           <div className="filter-item">
-            <span className="icon"><i className="fas fa-building"></i></span>
+            <span className="icon"><i className="fas fa-object-group"></i></span>
             <div className="filter-item-content">
               <label>Department</label>
               <ChipInput
@@ -147,6 +150,17 @@ const Sidebar = ({
               <ChipInput
                 filterKey="locations"
                 placeholder="Select prospect's location"
+              />
+            </div>
+          </div>
+
+          <div className="filter-item">
+            <span className="icon"><i className="fas fa-building"></i></span>
+            <div className="filter-item-content">
+              <label>Company Name</label>
+              <ChipInput
+                filterKey="companyNames"
+                placeholder="Enter company names"
               />
             </div>
           </div>
@@ -175,7 +189,7 @@ const Sidebar = ({
           </div>
 
           <div className="filter-item">
-            <span className="icon"><i className="fas fa-users-line"></i></span>
+            <span className="icon"><i className="fas fa-user-friends"></i></span>
             <div className="filter-item-content">
               <label>Size</label>
               <select>
@@ -185,14 +199,6 @@ const Sidebar = ({
                 <option>201-1000</option>
                 <option>1000+</option>
               </select>
-            </div>
-          </div>
-
-          <div className="filter-item">
-            <span className="icon"><i className="fas fa-calendar-alt"></i></span>
-            <div className="filter-item-content">
-              <label>Founded</label>
-              <input type="text" placeholder="Select founding date range (e.g., 2010-Present)" />
             </div>
           </div>
 
