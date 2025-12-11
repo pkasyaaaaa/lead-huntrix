@@ -13,7 +13,7 @@ function App() {
   const [prospectFilterExpanded, setProspectFilterExpanded] = useState(true);
   const [userId] = useState(1); // Default user ID
   const [filters, setFilters] = useState({
-    jobTitles: ['Software Engineer', 'Product Manager', 'Data Analyst'],
+    jobTitles: [],
     locations: [],
     managementLevels: [],
     departments: [],
