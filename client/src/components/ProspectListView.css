@@ -200,7 +200,9 @@
 }
 
 .prospect-table td:nth-child(6),
-.prospect-table td:nth-child(7),
+.prospect-table td:nth-child(7){
+  max-width: 200px;
+}
 .prospect-table td:nth-child(8) {
   max-width: 140px;
 }

@@ -363,12 +363,16 @@
 /* Main Content */
 .main-content {
   flex: 1;
-  padding: 60px 40px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: #ffffff;
   transition: margin-left 0.3s ease;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Search Container */
@@ -594,4 +598,161 @@
 
 .back-dashboard-btn:hover {
   background-color: #f0f0f0;
+}
+
+/* ===================================
+   RESPONSIVE DESIGN
+   =================================== */
+
+/* Tablet (≤1024px) */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 250px;
+  }
+
+  .main-content {
+    padding: 20px;
+  }
+
+  .prospect-finder-view .search-container,
+  .market-analysis-view .search-container {
+    max-width: 600px;
+    padding-top: 30px;
+  }
+
+  .prospect-finder-view .search-title,
+  .market-analysis-view .search-title {
+    margin-top: 60px;
+    font-size: 22px;
+  }
+}
+
+/* Tablet (≤768px) */
+@media (max-width: 768px) {
+  .app {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+    max-height: 60vh;
+  }
+
+  .sidebar.closed {
+    max-height: 60px;
+  }
+
+  .toggle-btn {
+    right: 10px;
+    top: 15px;
+  }
+
+  .main-content {
+    padding: 15px;
+  }
+
+  .prospect-finder-view .search-container,
+  .market-analysis-view .search-container {
+    max-width: 100%;
+    padding-top: 20px;
+    margin-bottom: 40px;
+  }
+
+  .prospect-finder-view .search-title,
+  .market-analysis-view .search-title {
+    margin-top: 30px;
+    font-size: 20px;
+  }
+
+  .suggestions-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .start-analysis-btn,
+  .back-dashboard-btn {
+    max-width: 100%;
+    margin-top: 20px;
+  }
+
+  .progress-container {
+    padding-top: 80px;
+  }
+
+  .progress-title {
+    font-size: 24px;
+  }
+
+  .progress-subtitle {
+    font-size: 16px;
+  }
+}
+
+/* Mobile (≤480px) */
+@media (max-width: 480px) {
+  .sidebar {
+    padding: 15px 0;
+  }
+
+  .menu-item {
+    padding: 12px 15px;
+  }
+
+  .filter-item {
+    padding: 10px 15px;
+  }
+
+  .main-content {
+    padding: 10px;
+  }
+
+  .prospect-finder-view .search-container,
+  .market-analysis-view .search-container {
+    padding-top: 10px;
+    margin-bottom: 30px;
+  }
+
+  .prospect-finder-view .search-title,
+  .market-analysis-view .search-title {
+    margin-top: 20px;
+    font-size: 18px;
+  }
+
+  .search-box {
+    padding: 10px 20px;
+  }
+
+  .search-box input {
+    font-size: 14px;
+  }
+
+  .suggestion-card,
+  .suggestion-card-ma {
+    padding: 10px 15px;
+    font-size: 13px;
+  }
+
+  .start-analysis-btn,
+  .back-dashboard-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .progress-container {
+    padding-top: 60px;
+  }
+
+  .progress-container .icon {
+    font-size: 40px;
+  }
+
+  .progress-title {
+    font-size: 20px;
+  }
+
+  .progress-subtitle {
+    font-size: 14px;
+  }
 }
