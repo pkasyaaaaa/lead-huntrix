@@ -1,3 +1,7 @@
+/* ===================================
+   PROSPECT LIST VIEW - MAIN STYLES
+   =================================== */
+
 /* Main container */
 .prospect-list-view {
   padding: 20px;
@@ -42,7 +46,7 @@
   cursor: pointer;
   transition: all 0.2s;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  white-space: nowrap;
+  white-space: wrap;
   border: none;
 }
 
@@ -59,28 +63,49 @@
   background-color: #fff;
   border: 1px solid #000;
   color: #0a66c2;
+  margin-left: auto;
 }
 
 .download-btn:hover {
   background-color: #f0f0f0;
 }
 
-/* Table container - SCROLLS INDEPENDENTLY */
+/* ===================================
+   TABLE CONTAINER - ADJUSTABLE HEIGHT
+   === CHANGE THIS VALUE TO ADJUST ===
+   =================================== */
+
 .prospect-table-container {
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
-  overflow: auto;
+  
+  /* VERTICAL SCROLLING - INDEPENDENT */
+  overflow-y: auto;      /* Enable vertical scroll only */
+  overflow-x: hidden;    /* Disable horizontal scroll */
   -webkit-overflow-scrolling: touch;
+  
+  /* TABLE HEIGHT - ADJUST THIS VALUE:
+     400px = ~5-6 rows visible
+     500px = ~7-8 rows visible
+     600px = ~9-10 rows visible
+     700px = ~11-12 rows visible
+     Change the value below to adjust */
+  max-height: 500px;
+  height: 500px;
 }
 
+/* Table styling */
 .prospect-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 800px;
+  
+  /* NO HORIZONTAL EXPANSION - fits container width */
+  min-width: 100%;
 }
 
+/* Sticky header - stays at top when scrolling */
 .prospect-table thead {
   background-color: #fff;
   position: sticky;
@@ -104,11 +129,12 @@
   text-align: center;
 }
 
+/* Column header with filter input */
 .column-header {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-width: 120px;
+  min-width: 100px;
 }
 
 .column-header span {
@@ -117,6 +143,7 @@
   color: #000;
 }
 
+/* Filter input styling */
 .column-filter {
   padding: 6px 8px;
   border: 1px solid #ddd;
@@ -125,6 +152,7 @@
   outline: none;
   transition: border-color 0.2s;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .column-filter:focus {
@@ -132,6 +160,7 @@
   box-shadow: 0 0 0 2px rgba(10, 102, 194, 0.1);
 }
 
+/* Table rows */
 .prospect-table tbody tr {
   border-bottom: 1px solid #e0e0e0;
   transition: background-color 0.2s;
@@ -145,6 +174,7 @@
   border-bottom: none;
 }
 
+/* Table cells - prevent text overflow */
 .prospect-table td {
   padding: 16px 12px;
   font-size: 14px;
@@ -161,19 +191,21 @@
   min-width: 50px;
 }
 
+/* Responsive column widths */
 .prospect-table td:nth-child(2),
 .prospect-table td:nth-child(3),
 .prospect-table td:nth-child(4),
 .prospect-table td:nth-child(5) {
-  max-width: 150px;
+  max-width: 120px;
 }
 
 .prospect-table td:nth-child(6),
 .prospect-table td:nth-child(7),
 .prospect-table td:nth-child(8) {
-  max-width: 180px;
+  max-width: 140px;
 }
 
+/* Links styling */
 .prospect-table td a {
   color: #0a66c2;
   text-decoration: none;
@@ -188,6 +220,7 @@
   text-decoration: underline;
 }
 
+/* Checkbox styling */
 .prospect-table input[type="checkbox"] {
   width: 18px;
   height: 18px;
@@ -196,6 +229,7 @@
   border-radius: 3px;
 }
 
+/* Empty state message */
 .empty-state {
   text-align: center;
   padding: 40px !important;
@@ -203,6 +237,7 @@
   font-style: italic;
 }
 
+/* Loading state */
 .loading {
   text-align: center;
   padding: 40px;
@@ -210,7 +245,10 @@
   font-size: 16px;
 }
 
-/* Scrollbar styling */
+/* ===================================
+   SCROLLBAR STYLING
+   =================================== */
+
 .prospect-table-container::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -230,7 +268,10 @@
   background: #a8a8a8;
 }
 
-/* Responsive */
+/* ===================================
+   RESPONSIVE DESIGN
+   =================================== */
+
 @media (max-width: 1200px) {
   .prospect-list-view {
     padding: 16px;
@@ -246,8 +287,10 @@
     font-size: 13px;
   }
 
-  .prospect-table {
-    min-width: 900px;
+  /* Adjust table height for medium screens */
+  .prospect-table-container {
+    max-height: 450px;
+    height: 450px;
   }
 }
 
@@ -275,10 +318,6 @@
     gap: 6px;
   }
 
-  .prospect-table {
-    min-width: 1000px;
-  }
-
   .prospect-table th {
     padding: 12px 8px;
     font-size: 13px;
@@ -300,6 +339,12 @@
 
   .prospect-table td a {
     font-size: 13px;
+  }
+
+  /* Adjust table height for tablets */
+  .prospect-table-container {
+    max-height: 400px;
+    height: 400px;
   }
 }
 
@@ -324,13 +369,13 @@
     justify-content: center;
   }
 
-  .prospect-table {
-    min-width: 1100px;
-  }
-
   .prospect-table-container {
     border-radius: 6px;
     margin: 0 -10px;
     width: calc(100% + 20px);
+    
+    /* Adjust table height for mobile */
+    max-height: 350px;
+    height: 350px;
   }
 }

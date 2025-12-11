@@ -38,18 +38,26 @@ const ProspectListView = ({ userId }) => {
   const handleSelectAll = () => {
     if (selectAll) {
       setSelectedProspects([]);
+      setSelectAll(false);
     } else {
       setSelectedProspects(filteredProspects.map(p => p.id));
+      setSelectAll(true);
     }
-    setSelectAll(!selectAll);
   };
 
   const handleSelectProspect = (prospectId) => {
+    let newSelected;
     if (selectedProspects.includes(prospectId)) {
-      setSelectedProspects(selectedProspects.filter(id => id !== prospectId));
+      newSelected = selectedProspects.filter(id => id !== prospectId);
     } else {
-      setSelectedProspects([...selectedProspects, prospectId]);
+      newSelected = [...selectedProspects, prospectId];
     }
+    
+    setSelectedProspects(newSelected);
+    
+    // Update selectAll based on filtered results
+    const allFiltered = filteredProspects.map(p => p.id);
+    setSelectAll(newSelected.length > 0 && newSelected.length === allFiltered.length);
   };
 
   const handleFilterChange = (column, value) => {
@@ -57,6 +65,8 @@ const ProspectListView = ({ userId }) => {
       ...filters,
       [column]: value
     });
+    // Reset select all when filtering
+    setSelectAll(false);
   };
 
   const filteredProspects = prospects.filter(prospect => {
