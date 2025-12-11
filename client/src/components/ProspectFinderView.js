@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import ProspectFinderSearch from './ProspectFinderSearch';
+import ProspectFinderResults from './ProspectFinderResults';
 
-const ProspectFinderView = ({ filters, userId, showListView = false }) => {
+const ProspectFinderView = ({ filters, userId, showListView = false, triggerSearch = false }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [prospects, setProspects] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const suggestions = [
-    'I want to promote my new HR training program.',
-    'Who should I target for my new handmade clothes?',
-    'Help me find people interested in solar installation services.',
-    'Target the audience that are interested in maid services'
-  ];
+  const [showResults, setShowResults] = useState(false);
 
   useEffect(() => {
-    fetchProspects();
-  }, [filters, userId]);
+    if (showResults) {
+      fetchProspects();
+    }
+  }, [filters, userId, showResults]);
+
+  // Trigger search when triggerSearch prop changes
+  useEffect(() => {
+    if (triggerSearch) {
+      setShowResults(true);
+    }
+  }, [triggerSearch]);
 
   const fetchProspects = async () => {
     try {
@@ -58,6 +63,7 @@ const ProspectFinderView = ({ filters, userId, showListView = false }) => {
   };
 
   const handleSearch = () => {
+    setShowResults(true);
     fetchProspects();
   };
 
@@ -69,96 +75,32 @@ const ProspectFinderView = ({ filters, userId, showListView = false }) => {
     setSearchQuery('');
   };
 
+  const handleBackToSearch = () => {
+    setShowResults(false);
+    setProspects([]);
+  };
+
+  // Show results page
+  if (showResults) {
+    return (
+      <ProspectFinderResults
+        prospects={prospects}
+        loading={loading}
+        onBack={handleBackToSearch}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        onSearch={handleSearch}
+      />
+    );
+  }
+
+  // Show search page
   return (
-    <div className="prospect-finder-view">
-      <div className="search-container">
-        <div className="search-title">
-          Keyword Search to find your lead
-          <span className="info-icon" title="Search for prospects using keywords">
-            <i className="fas fa-info-circle"></i>
-          </span>
-        </div>
-        <div className="search-box">
-          <span className="search-icon"><i className="fas fa-search"></i></span>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-            placeholder="Try any keyword and explore related companies & staff"
-          />
-          <button className="clear-btn" onClick={clearSearch}>
-            <i className="fas fa-times"></i>
-          </button>
-        </div>
-      </div>
-
-      <div className="suggestions-container">
-        <div className="suggestions-title">AI-powered search suggestions</div>
-        <div className="suggestions-grid">
-          {suggestions.map((suggestion, index) => (
-            <div
-              key={index}
-              className="suggestion-card"
-              onClick={() => handleSuggestionClick(suggestion)}
-            >
-              {suggestion}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {loading && (
-        <div style={{ marginTop: '40px', textAlign: 'center' }}>
-          <i className="fas fa-spinner fa-spin" style={{ fontSize: '24px', color: '#007bff' }}></i>
-          <p style={{ marginTop: '10px', color: '#666' }}>Loading prospects...</p>
-        </div>
-      )}
-
-      {!loading && prospects.length > 0 && (
-        <div style={{ marginTop: '40px', width: '100%', maxWidth: '900px' }}>
-          <h3 style={{ marginBottom: '20px', color: '#333' }}>
-            Found {prospects.length} prospects
-          </h3>
-          <div style={{ display: 'grid', gap: '15px' }}>
-            {prospects.map((prospect) => (
-              <div
-                key={prospect.id}
-                style={{
-                  padding: '20px',
-                  border: '1px solid #e0e0e0',
-                  borderRadius: '8px',
-                  backgroundColor: '#fff',
-                  transition: 'all 0.2s'
-                }}
-              >
-                <h4 style={{ marginBottom: '8px', color: '#007bff' }}>{prospect.name}</h4>
-                <p style={{ marginBottom: '5px', fontSize: '14px' }}>
-                  <strong>Position:</strong> {prospect.job_title} at {prospect.company_name}
-                </p>
-                <p style={{ marginBottom: '5px', fontSize: '14px' }}>
-                  <strong>Location:</strong> {prospect.location}
-                </p>
-                <p style={{ marginBottom: '5px', fontSize: '14px' }}>
-                  <strong>Industry:</strong> {prospect.industry}
-                </p>
-                {prospect.skills && (
-                  <p style={{ marginBottom: '5px', fontSize: '14px' }}>
-                    <strong>Skills:</strong> {prospect.skills}
-                  </p>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {!loading && prospects.length === 0 && searchQuery && (
-        <div style={{ marginTop: '40px', textAlign: 'center', color: '#666' }}>
-          <p>No prospects found matching your criteria.</p>
-        </div>
-      )}
-    </div>
+    <ProspectFinderSearch
+      searchQuery={searchQuery}
+      setSearchQuery={setSearchQuery}
+      onSearch={handleSearch}
+    />
   );
 };
 

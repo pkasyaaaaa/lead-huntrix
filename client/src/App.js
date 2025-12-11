@@ -12,6 +12,7 @@ function App() {
   const [sidebarClosed, setSidebarClosed] = useState(false);
   const [prospectFilterExpanded, setProspectFilterExpanded] = useState(true);
   const [userId] = useState(1); // Default user ID
+  const [triggerSearch, setTriggerSearch] = useState(false);
   const [filters, setFilters] = useState({
     jobTitles: [],
     locations: [],
@@ -46,6 +47,12 @@ function App() {
     }
   };
 
+  const handleSearch = (searchFilters) => {
+    // Toggle triggerSearch to trigger the search
+    setTriggerSearch(prev => !prev);
+    console.log('Search triggered with filters:', searchFilters);
+  };
+
   return (
     <Router>
       <div className="app">
@@ -59,11 +66,12 @@ function App() {
           filters={filters}
           setFilters={setFilters}
           userId={userId}
+          onSearch={handleSearch}
         />
         
         <div className="main-content">
           {activeView === 'prospect-finder' && (
-            <ProspectFinderView filters={filters} userId={userId} />
+            <ProspectFinderView filters={filters} userId={userId} triggerSearch={triggerSearch} />
           )}
           {activeView === 'market-analysis' && (
             <MarketAnalysisView userId={userId} />

@@ -9,10 +9,32 @@ const Sidebar = ({
   onToggleProspectFilter,
   filters,
   setFilters,
-  userId
+  userId,
+  onSearch
 }) => {
   const FULL_LOGO_SRC = '/image/logo.png';
   const SIDE_LOGO_SRC = '/image/side_logo.png';
+
+  const handleSearch = () => {
+    // Change view to prospect-finder when search is clicked
+    onViewChange('prospect-finder');
+    
+    if (onSearch) {
+      onSearch(filters);
+    }
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      jobTitles: [],
+      managementLevels: [],
+      departments: [],
+      locations: [],
+      companyNames: [],
+      industries: [],
+      skills: []
+    });
+  };
 
   const addChip = (filterKey, value) => {
     if (!value.trim()) return;
@@ -192,8 +214,8 @@ const Sidebar = ({
             <span className="icon"><i className="fas fa-user-friends"></i></span>
             <div className="filter-item-content">
               <label>Size</label>
-              <select>
-                <option disabled selected>Choose number of employees</option>
+              <select defaultValue="">
+                <option value="" disabled>Choose number of employees</option>
                 <option>1-50</option>
                 <option>51-200</option>
                 <option>201-1000</option>
@@ -206,13 +228,22 @@ const Sidebar = ({
             <span className="icon"><i className="fas fa-dollar-sign"></i></span>
             <div className="filter-item-content">
               <label>Revenue</label>
-              <select>
-                <option disabled selected>Select company's revenue range</option>
+              <select defaultValue="">
+                <option value="" disabled>Select company's revenue range</option>
                 <option>$1M - $10M</option>
                 <option>$10M - $100M</option>
                 <option>$100M - $1B</option>
               </select>
             </div>
+          </div>
+
+          <div className="filter-buttons">
+            <button className="search-btn" onClick={handleSearch}>
+              <i className="fas fa-search"></i> Search
+            </button>
+            <button className="clear-btn" onClick={handleClearFilters}>
+              <i className="fas fa-times"></i> Clear Filter
+            </button>
           </div>
         </div>
       </div>
