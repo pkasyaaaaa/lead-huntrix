@@ -1,48 +1,54 @@
+/* Main container */
 .prospect-list-view {
-  padding: 40px 60px;
+  padding: 20px;
   background-color: #fff;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
+/* Header section */
 .prospect-list-header {
-  margin-bottom: 40px;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .prospect-list-header h1 {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 600;
   color: #000;
-  margin-bottom: 30px;
+  margin: 0;
 }
 
+/* Action buttons */
 .header-actions {
   display: flex;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
   align-items: center;
+  justify-content: flex-start;
 }
 
 .action-btn,
 .download-btn {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 24px;
-  border-radius: 10px;
-  font-size: 16px;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 400;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+  border: none;
 }
 
 .action-btn {
   background-color: #f6f6f6;
-  border: none;
   color: #000;
-}
-
-.action-btn i {
-  font-size: 18px;
 }
 
 .action-btn:hover {
@@ -51,75 +57,79 @@
 
 .download-btn {
   background-color: #fff;
-  border: 0.5px solid #000;
+  border: 1px solid #000;
   color: #0a66c2;
-  margin-left: auto;
 }
 
 .download-btn:hover {
-  background-color: #f6f6f6;
+  background-color: #f0f0f0;
 }
 
+/* Table container - SCROLLS INDEPENDENTLY */
 .prospect-table-container {
   background-color: #fff;
-  border: 1px solid #797777;
-  border-radius: 10px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  overflow: hidden;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .prospect-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 800px;
 }
 
 .prospect-table thead {
   background-color: #fff;
-  border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .prospect-table th {
-  padding: 20px 16px;
+  padding: 16px 12px;
   text-align: left;
-  font-size: 20px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   color: #000;
+  white-space: nowrap;
 }
 
 .prospect-table th.checkbox-column {
-  width: 60px;
+  width: 50px;
+  min-width: 50px;
   text-align: center;
 }
 
 .column-header {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  min-width: 120px;
 }
 
 .column-header span {
-  font-size: 20px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   color: #000;
 }
 
 .column-filter {
-  padding: 6px 10px;
+  padding: 6px 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 14px;
-  font-family: 'Inter', sans-serif;
+  font-size: 12px;
   outline: none;
   transition: border-color 0.2s;
+  width: 100%;
 }
 
 .column-filter:focus {
   border-color: #0a66c2;
-}
-
-.column-filter::placeholder {
-  color: #999;
-  font-size: 13px;
+  box-shadow: 0 0 0 2px rgba(10, 102, 194, 0.1);
 }
 
 .prospect-table tbody tr {
@@ -136,111 +146,191 @@
 }
 
 .prospect-table td {
-  padding: 20px 16px;
-  font-size: 18px;
-  color: #000;
+  padding: 16px 12px;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .prospect-table td.checkbox-column {
   text-align: center;
+  width: 50px;
+  min-width: 50px;
+}
+
+.prospect-table td:nth-child(2),
+.prospect-table td:nth-child(3),
+.prospect-table td:nth-child(4),
+.prospect-table td:nth-child(5) {
+  max-width: 150px;
+}
+
+.prospect-table td:nth-child(6),
+.prospect-table td:nth-child(7),
+.prospect-table td:nth-child(8) {
+  max-width: 180px;
+}
+
+.prospect-table td a {
+  color: #0a66c2;
+  text-decoration: none;
+  font-size: 14px;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.prospect-table td a:hover {
+  text-decoration: underline;
 }
 
 .prospect-table input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   cursor: pointer;
-  accent-color: #d9d9d9;
-  border: 1px solid #999999;
-  border-radius: 5px;
+  accent-color: #0a66c2;
+  border-radius: 3px;
 }
 
-.prospect-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.empty-state {
+  text-align: center;
+  padding: 40px !important;
+  color: #999;
+  font-style: italic;
 }
 
-.prospect-name {
-  font-size: 18px;
-  font-weight: 400;
-  color: #000;
-}
-
-.prospect-title {
-  font-size: 15px;
-  font-weight: 400;
-  color: #797777;
-}
-
-.email-link,
-.linkedin-link {
-  color: #000;
-  text-decoration: none;
-  font-size: 18px;
-  transition: color 0.2s;
-}
-
-.email-link:hover {
-  color: #0a66c2;
-  text-decoration: underline;
-}
-
-.linkedin-link:hover {
-  color: #0a66c2;
-  text-decoration: underline;
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
 }
 
 /* Scrollbar styling */
-.prospect-table-container {
-  max-height: calc(100vh - 300px);
-  overflow-y: auto;
-}
-
 .prospect-table-container::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 .prospect-table-container::-webkit-scrollbar-track {
   background: #f1f1f1;
-  border-radius: 10px;
+  border-radius: 3px;
 }
 
 .prospect-table-container::-webkit-scrollbar-thumb {
-  background: #d9d9d9;
-  border-radius: 10px;
+  background: #c1c1c1;
+  border-radius: 3px;
 }
 
 .prospect-table-container::-webkit-scrollbar-thumb:hover {
-  background: #b3b3b3;
+  background: #a8a8a8;
 }
 
-/* Responsive adjustments */
-@media (max-width: 1400px) {
+/* Responsive */
+@media (max-width: 1200px) {
   .prospect-list-view {
-    padding: 30px 40px;
+    padding: 16px;
   }
 
-  .prospect-table th,
-  .prospect-table td {
-    font-size: 16px;
-    padding: 16px 12px;
+  .prospect-list-header h1 {
+    font-size: 24px;
   }
 
-  .column-header span {
-    font-size: 18px;
+  .action-btn,
+  .download-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .prospect-table {
+    min-width: 900px;
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
   .prospect-list-view {
-    padding: 20px 30px;
+    padding: 12px;
+  }
+
+  .prospect-list-header {
+    margin-bottom: 20px;
+  }
+
+  .prospect-list-header h1 {
+    font-size: 20px;
   }
 
   .header-actions {
-    flex-wrap: wrap;
+    gap: 8px;
   }
 
+  .action-btn,
   .download-btn {
-    margin-left: 0;
+    padding: 8px 12px;
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .prospect-table {
+    min-width: 1000px;
+  }
+
+  .prospect-table th {
+    padding: 12px 8px;
+    font-size: 13px;
+  }
+
+  .prospect-table td {
+    padding: 12px 8px;
+    font-size: 13px;
+  }
+
+  .column-filter {
+    padding: 4px 6px;
+    font-size: 11px;
+  }
+
+  .column-header span {
+    font-size: 13px;
+  }
+
+  .prospect-table td a {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .prospect-list-view {
+    padding: 10px;
+  }
+
+  .prospect-list-header h1 {
+    font-size: 18px;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .action-btn,
+  .download-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .prospect-table {
+    min-width: 1100px;
+  }
+
+  .prospect-table-container {
+    border-radius: 6px;
+    margin: 0 -10px;
+    width: calc(100% + 20px);
   }
 }

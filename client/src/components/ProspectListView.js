@@ -74,22 +74,60 @@ const ProspectListView = ({ userId }) => {
   });
 
   const handleSendEmail = () => {
+    if (selectedProspects.length === 0) {
+      alert('Please select at least one prospect');
+      return;
+    }
     console.log('Send email to:', selectedProspects);
-    // Placeholder for email functionality
+    // Add your email functionality here
   };
 
   const handleSendLinkedIn = () => {
+    if (selectedProspects.length === 0) {
+      alert('Please select at least one prospect');
+      return;
+    }
     console.log('Send LinkedIn message to:', selectedProspects);
-    // Placeholder for LinkedIn functionality
+    // Add your LinkedIn functionality here
   };
 
   const handleDownload = () => {
-    console.log('Download prospect list');
-    // Placeholder for download functionality
+    if (selectedProspects.length === 0) {
+      alert('Please select at least one prospect to download');
+      return;
+    }
+
+    const selectedData = filteredProspects.filter(p => selectedProspects.includes(p.id));
+    
+    // Create CSV
+    const headers = ['Name', 'Job Title', 'Company Name', 'Location', 'LinkedIn', 'Email', 'Phone Number'];
+    const csvContent = [
+      headers.join(','),
+      ...selectedData.map(p => [
+        `"${p.name || ''}"`,
+        `"${p.job_title || ''}"`,
+        `"${p.company_name || ''}"`,
+        `"${p.location || ''}"`,
+        `"${p.linkedin_url || ''}"`,
+        `"${Array.isArray(p.email) ? p.email.join('; ') : p.email || ''}"`,
+        `"${Array.isArray(p.phone_number) ? p.phone_number.join('; ') : p.phone_number || ''}"`
+      ].join(','))
+    ].join('\n');
+    
+    // Download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'prospects.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   if (loading) {
-    return <div className="prospect-list-view">Loading...</div>;
+    return <div className="prospect-list-view"><div className="loading">Loading prospects...</div></div>;
   }
 
   return (
@@ -189,30 +227,36 @@ const ProspectListView = ({ userId }) => {
             </tr>
           </thead>
           <tbody>
-            {filteredProspects.map((prospect) => (
-              <tr key={prospect.id}>
-                <td className="checkbox-column">
-                  <input
-                    type="checkbox"
-                    checked={selectedProspects.includes(prospect.id)}
-                    onChange={() => handleSelectProspect(prospect.id)}
-                  />
-                </td>
-                <td>{prospect.name}</td>
-                <td>{prospect.job_title}</td>
-                <td>{prospect.company_name}</td>
-                <td>{prospect.location}</td>
-                <td>
-                  {prospect.linkedin_url ? (
-                    <a href={prospect.linkedin_url} target="_blank" rel="noopener noreferrer">
-                      {prospect.linkedin_url}
-                    </a>
-                  ) : '-'}
-                </td>
-                <td>{prospect.email ? (Array.isArray(prospect.email) ? prospect.email.join(', ') : prospect.email) : '-'}</td>
-                <td>{prospect.phone_number ? (Array.isArray(prospect.phone_number) ? prospect.phone_number.join(', ') : prospect.phone_number) : '-'}</td>
+            {filteredProspects.length > 0 ? (
+              filteredProspects.map((prospect) => (
+                <tr key={prospect.id}>
+                  <td className="checkbox-column">
+                    <input
+                      type="checkbox"
+                      checked={selectedProspects.includes(prospect.id)}
+                      onChange={() => handleSelectProspect(prospect.id)}
+                    />
+                  </td>
+                  <td>{prospect.name}</td>
+                  <td>{prospect.job_title}</td>
+                  <td>{prospect.company_name}</td>
+                  <td>{prospect.location}</td>
+                  <td>
+                    {prospect.linkedin_url ? (
+                      <a href={prospect.linkedin_url} target="_blank" rel="noopener noreferrer">
+                        {prospect.linkedin_url}
+                      </a>
+                    ) : '-'}
+                  </td>
+                  <td>{prospect.email ? (Array.isArray(prospect.email) ? prospect.email.join(', ') : prospect.email) : '-'}</td>
+                  <td>{prospect.phone_number ? (Array.isArray(prospect.phone_number) ? prospect.phone_number.join(', ') : prospect.phone_number) : '-'}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="8" className="empty-state">No prospects found</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
