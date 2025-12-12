@@ -87,8 +87,6 @@
 
 .sidebar.closed .logo img {
   max-width: 40px;
-  /* NEW: Apply the 360-degree rotation when the sidebar is closed. 
-     The transition defined on the base .logo img rule handles the animation. */
   transform: rotate(360deg); 
 }
 
@@ -144,18 +142,16 @@
   margin-bottom: 25px;
   color: #333;
   transition: opacity 0.2s, transform 0.2s; 
-  cursor: default; /* Changed cursor back to default if no interaction is needed */
+  cursor: default;
 }
 
 .logo img {
   max-width: 180px;
   height: auto;
   display: block;
-  /* UPDATED: Define a smooth transition for the transform property */
   transition: max-width 0.3s ease, transform 0.3s ease; 
-  transform: rotate(0deg); /* Initial state: no rotation */
+  transform: rotate(0deg);
 }
-
 
 /* Menu Items */
 .menu-item {
@@ -194,7 +190,7 @@
 
 .prospect-finder-menu {
   font-weight: 600;
-  border-bottom:0;
+  border-bottom: 0;
   margin-bottom: 0;
 }
 
@@ -393,6 +389,7 @@
 .menu-item:last-child {
   border-bottom: none;
 }
+
 .menu-item:hover,
 .menu-item.active {
   background-color: #f0f6ff;
@@ -413,113 +410,16 @@
   align-items: center;
   background-color: #ffffff;
   transition: margin-left 0.3s ease;
-  overflow-y: hidden;
+  overflow-y: auto;
   overflow-x: hidden;
   width: 100%;
   box-sizing: border-box;
 }
 
-/* Search Container */
-.prospect-finder-view .search-container {
-  width: 100%;
-  max-width: 700px;
-  margin-bottom: 80px;
-  padding-top: 50px;
-}
-
-.prospect-finder-view .search-title {
-  font-size: 24px;
-  font-weight: bold;
-  text-align: center;
-  margin-top: 110px;
-  margin-bottom: 25px;
-  color: #333;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.info-icon {
-  font-size: 16px;
-  color: #999;
-  cursor: help;
-}
-
-.search-box {
-  display: flex;
-  align-items: center;
-  background-color: #ffffff;
-  border: 1px solid #ccc;
-  border-radius: 25px;
-  padding: 12px 25px;
-  gap: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-.search-box input {
-  flex: 1;
-  border: none;
-  outline: none;
-  font-size: 15px;
-  color: #666;
-}
-
-.search-box .search-icon {
-  color: #999;
-  font-size: 18px;
-}
-
-.search-box .clear-btn {
-  background: none;
-  border: none;
-  color: #999;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 0;
-  transition: color 0.2s;
-}
-
-/* Suggestions */
-.suggestions-container {
-  width: 100%;
-  max-width: 650px;
-  text-align: center;
-}
-
-.suggestions-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #666;
-  margin-bottom: 15px;
-}
-
-.suggestions-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-}
-
-.suggestion-card,
-.suggestion-card-ma {
-  padding: 12px 20px;
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-align: center;
-  color: #333;
-  font-size: 14px;
-  line-height: 1.4;
-}
-
-.suggestion-card:hover,
-.suggestion-card-ma:hover {
-  background-color: #f8f9fa;
-  border-color: #007bff;
-  transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
+/* Table-specific scrolling */
+.prospect-table-container {
+  overflow-y: auto;
+  overflow-x: auto;
 }
 
 /* Market Analysis View */
@@ -562,6 +462,47 @@
 
 .market-analysis-view .suggestions-title {
   display: none;
+}
+
+.suggestions-container {
+  width: 100%;
+  max-width: 650px;
+  text-align: center;
+}
+
+.suggestions-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.suggestions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.suggestion-card,
+.suggestion-card-ma {
+  padding: 12px 20px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  color: #333;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.suggestion-card:hover,
+.suggestion-card-ma:hover {
+  background-color: #f8f9fa;
+  border-color: #007bff;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
 }
 
 /* Buttons */
@@ -643,234 +584,6 @@
 .back-dashboard-btn:hover {
   background-color: #f0f0f0;
 }
-/* Prospect Results View */
-.prospect-results {
-  width: 100%;
-  max-width: 1200px;
-  margin-top: 30px;
-}
-
-.results-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.results-header h3 {
-  font-size: 20px;
-  font-weight: 500;
-  color: #333;
-  margin: 0;
-}
-
-.header-actions {
-  display: flex;
-  gap: 15px;
-}
-
-.add-to-list-btn,
-.download-btn {
-  padding: 10px 20px;
-  border: 0.5px solid #000;
-  border-radius: 5px;
-  background: white;
-  cursor: pointer;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.2s;
-}
-
-.add-to-list-btn:hover,
-.download-btn:hover {
-  background-color: #f5f5f5;
-}
-
-.download-btn {
-  color: #0a66c2;
-}
-
-.tabs-container {
-  display: flex;
-  gap: 0;
-  margin-bottom: 20px;
-}
-
-.tab-btn {
-  padding: 15px 30px;
-  border: 1px solid #797777;
-  background: white;
-  font-size: 20px;
-  cursor: pointer;
-  transition: all 0.2s;
-  border-radius: 20px;
-}
-
-.tab-btn:first-child {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-.tab-btn:last-child {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  border-left: none;
-}
-
-.tab-btn.active {
-  background: #eee;
-}
-
-.tab-btn:hover:not(.active) {
-  background: #f8f8f8;
-}
-
-.prospect-table-container {
-  background: white;
-  border: 1px solid #797777;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-}
-
-.prospect-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.prospect-table thead {
-  background: white;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.prospect-table th {
-  padding: 15px;
-  text-align: left;
-  font-size: 20px;
-  font-weight: 500;
-  color: #000;
-}
-
-.prospect-table td:nth-child(2) {
-  min-width: 220px;
-  width: 220px;
-}
-
-.prospect-table td:nth-child(3) {
-  min-width: 220px;
-  width: 220px;
-}
-
-.prospect-table td {
-  padding: 15px;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.prospect-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.prospect-table tbody tr:hover {
-  background: #f9f9f9;
-}
-
-.checkbox-column {
-  width: 50px;
-  text-align: center;
-}
-
-.checkbox-column input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  border: 1px solid #999;
-  border-radius: 3px;
-}
-
-.prospect-name {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.avatar {
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
-  min-height: 40px;
-  max-width: 40px;
-  max-height: 40px;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #d9d9d9;
-}
-
-.avatar img {
-  width: 100%;
-  height: 100%;
-  min-width: 40px;
-  min-height: 40px;
-  max-width: 40px;
-  max-height: 40px;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.name-text {
-  font-size: 15px;
-  color: #000;
-  font-weight: normal;
-}
-
-.job-title {
-  font-size: 15px;
-  color: #797777;
-  margin-top: 2px;
-}
-
-.company-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.company-logo {
-  width: 46px;
-  height: 46px;
-  background: #d9d9d9;
-  border-radius: 0;
-}
-
-.company-name {
-  font-size: 15px;
-  color: #000;
-}
-
-.company-details {
-  font-size: 15px;
-  color: #797777;
-  margin-top: 2px;
-}
-
-.locked-field {
-  background: rgba(217, 217, 217, 0.89);
-  padding: 10px 15px;
-  border-radius: 5px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #000;
-  font-size: 15px;
-}
-
-.locked-field i {
-  font-size: 14px;
-}
 
 /* ===================================
    RESPONSIVE DESIGN
@@ -886,51 +599,14 @@
     padding: 20px;
   }
 
-  .prospect-finder-view .search-container,
   .market-analysis-view .search-container {
     max-width: 600px;
     padding-top: 30px;
   }
 
-  .prospect-finder-view .search-title,
   .market-analysis-view .search-title {
     margin-top: 60px;
     font-size: 22px;
-  }
-
-  /* Prospect Results responsive */
-  .prospect-results {
-    margin-top: 20px;
-  }
-
-  .results-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
-
-  .header-actions {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .tabs-container {
-    overflow-x: auto;
-  }
-
-  .tab-btn {
-    font-size: 18px;
-    padding: 12px 25px;
-    white-space: nowrap;
-  }
-
-  .prospect-table th {
-    font-size: 18px;
-    padding: 12px;
-  }
-
-  .prospect-table td {
-    padding: 12px;
   }
 }
 
@@ -960,14 +636,12 @@
     padding: 15px;
   }
 
-  .prospect-finder-view .search-container,
   .market-analysis-view .search-container {
     max-width: 100%;
     padding-top: 20px;
     margin-bottom: 40px;
   }
 
-  .prospect-finder-view .search-title,
   .market-analysis-view .search-title {
     margin-top: 30px;
     font-size: 20px;
@@ -995,72 +669,6 @@
   .progress-subtitle {
     font-size: 16px;
   }
-
-  /* Prospect Results responsive */
-  .prospect-results {
-    margin-top: 15px;
-  }
-
-  .results-header h3 {
-    font-size: 18px;
-  }
-
-  .header-actions {
-    flex-wrap: wrap;
-  }
-
-  .add-to-list-btn,
-  .download-btn {
-    font-size: 14px;
-    padding: 8px 16px;
-  }
-
-  .tabs-container {
-    margin-bottom: 15px;
-  }
-
-  .tab-btn {
-    font-size: 16px;
-    padding: 10px 20px;
-  }
-
-  .prospect-table-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .prospect-table {
-    min-width: 800px;
-  }
-
-  .prospect-table th {
-    font-size: 16px;
-    padding: 10px;
-  }
-
-  .prospect-table td {
-    padding: 10px;
-    font-size: 14px;
-  }
-
-  .name-text,
-  .job-title,
-  .company-name,
-  .company-details {
-    font-size: 14px;
-  }
-
-  .avatar {
-    width: 35px;
-    height: 35px;
-    min-width: 35px;
-    min-height: 35px;
-  }
-
-  .company-logo {
-    width: 40px;
-    height: 40px;
-  }
 }
 
 /* Mobile (≤480px) */
@@ -1081,24 +689,18 @@
     padding: 10px;
   }
 
-  .prospect-finder-view .search-container,
   .market-analysis-view .search-container {
     padding-top: 10px;
     margin-bottom: 30px;
   }
 
-  .prospect-finder-view .search-title,
   .market-analysis-view .search-title {
     margin-top: 20px;
     font-size: 18px;
   }
 
-  .search-box {
-    padding: 10px 20px;
-  }
-
-  .search-box input {
-    font-size: 14px;
+  .suggestions-grid {
+    grid-template-columns: 1fr;
   }
 
   .suggestion-card,
@@ -1127,71 +729,5 @@
 
   .progress-subtitle {
     font-size: 14px;
-  }
-
-  /* Prospect Results responsive */
-  .prospect-results {
-    margin-top: 10px;
-  }
-
-  .results-header h3 {
-    font-size: 16px;
-  }
-
-  .header-actions {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .add-to-list-btn,
-  .download-btn {
-    width: 100%;
-    justify-content: center;
-    font-size: 13px;
-    padding: 10px 15px;
-  }
-
-  .tab-btn {
-    font-size: 14px;
-    padding: 8px 15px;
-  }
-
-  .prospect-table th {
-    font-size: 14px;
-    padding: 8px;
-  }
-
-  .prospect-table td {
-    padding: 8px;
-    font-size: 12px;
-  }
-
-  .checkbox-column input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-  }
-
-  .avatar {
-    width: 30px;
-    height: 30px;
-    min-width: 30px;
-    min-height: 30px;
-  }
-
-  .company-logo {
-    width: 35px;
-    height: 35px;
-  }
-
-  .name-text,
-  .job-title,
-  .company-name,
-  .company-details {
-    font-size: 12px;
-  }
-
-  .locked-field {
-    padding: 8px 12px;
-    font-size: 12px;
   }
 }

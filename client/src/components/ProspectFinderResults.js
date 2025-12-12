@@ -1,5 +1,6 @@
 import React from 'react';
 
+import './ProspectFinderResults.css';
 export default function ProspectFinderResults({ prospects, loading, onBack, searchQuery, setSearchQuery, onSearch }) {
   const clearSearch = () => {
     setSearchQuery('');
