@@ -17,7 +17,7 @@ export default function ProspectFinderSearch({ searchQuery, setSearchQuery, onSe
   };
 
   return (
-    <div className="prospect-finder-view">
+    <div className="prospect-finder-search-view">
       <div className="search-container">
         <div className="search-title">
           Keyword Search to find your lead

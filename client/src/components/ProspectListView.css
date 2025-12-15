@@ -2,8 +2,8 @@
 .prospect-list-view {
   padding: 20px;
   background-color: #fff;
-  min-height: 100vh;
   overflow-x: hidden;
+  overflow-y: hidden;
   margin-left: 0;
   width: 100%;
   box-sizing: border-box;

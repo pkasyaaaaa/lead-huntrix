@@ -27,14 +27,14 @@
   background-color: #ffffff;
   border-right: 1px solid #e0e0e0;
   padding: 20px 0;
-  overflow-y: auto;
+  overflow-y: hidden;
   transition: width 0.3s ease, padding 0.3s ease;
   position: relative;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   z-index: 100;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .toggle-btn {
@@ -163,6 +163,7 @@
   margin: 0;
   border-bottom: 1px solid #e6e6e6;
   font-weight: 500;
+  font-size: 14px;
   color: #333;
   user-select: none;
   gap: 15px;
@@ -309,6 +310,7 @@
   font-size: 13px;
   color: #999;
   background: transparent;
+  font-weight: 400;
   outline: none;
   cursor: text;
   flex-grow: 1;
@@ -346,6 +348,7 @@
   border-radius: 5px;
   border: 0.5px solid #000;
   font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -410,7 +413,7 @@
   align-items: center;
   background-color: #ffffff;
   transition: margin-left 0.3s ease;
-  overflow-y: auto;
+  overflow-y: hidden;
   overflow-x: hidden;
   width: 100%;
   box-sizing: border-box;

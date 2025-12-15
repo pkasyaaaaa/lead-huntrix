@@ -4,6 +4,7 @@
   background-color: #fff;
   min-height: 100vh;
   overflow-x: hidden;
+  overflow-y: hidden;
   margin-left: 0;
   width: 100%;
   box-sizing: border-box;
@@ -13,13 +14,78 @@
   align-items: center;
 }
 
+/* Prospect Finder Search View - Centered Search */
+.prospect-finder-search-view {
+  padding: 20px;
+  background-color: #fff;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.prospect-finder-search-view .search-container {
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  padding-top: 0;
+  text-align: center;
+}
+
+.prospect-finder-search-view .search-title {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 25px;
+  margin-top: 100px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.prospect-finder-search-view .search-box {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  padding: 12px 25px;
+  gap: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+
+.prospect-finder-search-view .suggestions-container {
+  width: 100%;
+  text-align: center;
+}
+
+.prospect-finder-search-view .suggestions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  justify-items: center;
+}
+
 /* Search Container */
 .prospect-finder-view .search-container {
   width: 100%;
   max-width: 700px;
-  margin-bottom: 80px;
-  padding-top: 50px;
-  margin-left: 0;
+  margin-bottom: 0px;
+  padding-top: 0px;
+  align-self: flex-start;
   transition: margin-left 0.3s ease;
   box-sizing: border-box;
 }
@@ -99,11 +165,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .results-header h3 {
-  font-size: 28px;
+  font-size: 20px;
   font-weight: 600;
   color: #000;
   margin: 0;
@@ -480,7 +546,7 @@
 @media (max-width: 1200px) {
   .prospect-finder-view .search-container {
     max-width: 600px;
-    padding-top: 30px;
+    padding-top: 20px;
   }
 
   .prospect-results {
@@ -539,8 +605,8 @@
 @media (max-width: 768px) {
   .prospect-finder-view .search-container {
     max-width: 100%;
-    padding-top: 20px;
-    margin-bottom: 40px;
+    padding-top: 10px;
+    margin-bottom: 20px;
   }
 
   .prospect-finder-view .search-title {
