@@ -18,7 +18,10 @@ function App() {
     locations: [],
     managementLevels: [],
     departments: [],
+    companyNames: [],
     industries: [],
+    companySizes: [],
+    companyRevenues: [],
     skills: []
   });
 

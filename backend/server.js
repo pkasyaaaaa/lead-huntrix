@@ -15,11 +15,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const prospectRoutes = require('./routes/prospects');
 const marketAnalysisRoutes = require('./routes/marketAnalysis');
 const userRoutes = require('./routes/users');
+const lushaRoutes = require('./routes/lusha');
 
 // Routes
 app.use('/api/prospects', prospectRoutes);
 app.use('/api/market-analysis', marketAnalysisRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/lusha', lushaRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

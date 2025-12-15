@@ -25,38 +25,67 @@ const ProspectFinderView = ({ filters, userId, showListView = false, triggerSear
   const fetchProspects = async () => {
     try {
       setLoading(true);
-      const params = new URLSearchParams({
-        user_id: userId
-      });
 
-      if (filters.jobTitles && filters.jobTitles.length > 0) {
-        params.append('job_titles', filters.jobTitles.join(','));
+      // Build Lusha API filter object
+      const lushaFilters = {
+        contacts: {
+          include: {}
+        },
+        companies: {
+          include: {}
+        }
+      };
+
+      // Contact filters
+      if (filters.departments && filters.departments.length > 0) {
+        lushaFilters.contacts.include.departments = filters.departments;
       }
       if (filters.managementLevels && filters.managementLevels.length > 0) {
-        params.append('management_levels', filters.managementLevels.join(','));
+        lushaFilters.contacts.include.seniority = filters.managementLevels;
       }
-      if (filters.departments && filters.departments.length > 0) {
-        params.append('departments', filters.departments.join(','));
+      if (filters.jobTitles && filters.jobTitles.length > 0) {
+        lushaFilters.contacts.include.jobTitles = filters.jobTitles;
       }
       if (filters.locations && filters.locations.length > 0) {
-        params.append('locations', filters.locations.join(','));
-      }
-      if (filters.industries && filters.industries.length > 0) {
-        params.append('industries', filters.industries.join(','));
-      }
-      if (filters.skills && filters.skills.length > 0) {
-        params.append('skills', filters.skills.join(','));
-      }
-      if (searchQuery) {
-        params.append('search_query', searchQuery);
+        // Assuming locations are for contacts
+        lushaFilters.contacts.include.locations = filters.locations.map(loc => ({ country: loc }));
       }
 
-      const response = await axios.get(`/api/prospects?${params.toString()}`);
-      if (response.data.success) {
-        setProspects(response.data.data);
+      // Company filters
+      if (filters.companyNames && filters.companyNames.length > 0) {
+        lushaFilters.companies.include.names = filters.companyNames;
+      }
+      if (filters.industries && filters.industries.length > 0) {
+        lushaFilters.companies.include.mainIndustriesIds = filters.industries;
+      }
+      if (filters.companySizes && filters.companySizes.length > 0) {
+        // Assuming sizes are structured as {min, max} from Lusha
+        lushaFilters.companies.include.sizes = filters.companySizes;
+      }
+      if (filters.companyRevenues && filters.companyRevenues.length > 0) {
+        lushaFilters.companies.include.revenues = filters.companyRevenues;
+      }
+      
+      // Add search query if provided
+      if (searchQuery) {
+        lushaFilters.companies.include.searchText = searchQuery;
+      }
+
+      // Call Lusha API through our backend
+      const response = await axios.post('/api/lusha/search/contacts', {
+        filters: lushaFilters,
+        page: 0,
+        size: 50
+      });
+
+      if (response.data && response.data.contacts) {
+        setProspects(response.data.contacts);
+      } else {
+        setProspects([]);
       }
     } catch (error) {
-      console.error('Error fetching prospects:', error);
+      console.error('Error fetching prospects from Lusha:', error);
+      setProspects([]);
     } finally {
       setLoading(false);
     }
