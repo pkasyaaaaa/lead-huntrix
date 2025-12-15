@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import ProspectFinderView from './components/ProspectFinderView';
 import MarketAnalysisView from './components/MarketAnalysisView';
 import ProspectListView from './components/ProspectListView';
+import Login from './pages/Login';
+import SignUp from './pages/SignUp';
+import CompanyInfo from './pages/CompanyInfo';
 import axios from 'axios';
 import './App.css';
 
@@ -55,32 +58,39 @@ function App() {
 
   return (
     <Router>
-      <div className="app">
-        <Sidebar
-          activeView={activeView}
-          onViewChange={handleViewChange}
-          sidebarClosed={sidebarClosed}
-          onToggleSidebar={toggleSidebar}
-          prospectFilterExpanded={prospectFilterExpanded}
-          onToggleProspectFilter={toggleProspectFilter}
-          filters={filters}
-          setFilters={setFilters}
-          userId={userId}
-          onSearch={handleSearch}
-        />
-        
-        <div className="main-content">
-          {activeView === 'prospect-finder' && (
-            <ProspectFinderView filters={filters} userId={userId} triggerSearch={triggerSearch} />
-          )}
-          {activeView === 'market-analysis' && (
-            <MarketAnalysisView userId={userId} />
-          )}
-          {activeView === 'prospect-list' && (
-            <ProspectListView userId={userId} />
-          )}
-        </div>
-      </div>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/company-info" element={<CompanyInfo />} />
+        <Route path="/*" element={
+          <div className="app">
+            <Sidebar
+              activeView={activeView}
+              onViewChange={handleViewChange}
+              sidebarClosed={sidebarClosed}
+              onToggleSidebar={toggleSidebar}
+              prospectFilterExpanded={prospectFilterExpanded}
+              onToggleProspectFilter={toggleProspectFilter}
+              filters={filters}
+              setFilters={setFilters}
+              userId={userId}
+              onSearch={handleSearch}
+            />
+            
+            <div className="main-content">
+              {activeView === 'prospect-finder' && (
+                <ProspectFinderView filters={filters} userId={userId} triggerSearch={triggerSearch} />
+              )}
+              {activeView === 'market-analysis' && (
+                <MarketAnalysisView userId={userId} />
+              )}
+              {activeView === 'prospect-list' && (
+                <ProspectListView userId={userId} />
+              )}
+            </div>
+          </div>
+        } />
+      </Routes>
     </Router>
   );
 }

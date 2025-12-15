@@ -1,0 +1,489 @@
+/* ===================== AUTH CONTAINER ===================== */
+.auth-container {
+  min-height: 100vh;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===================== AUTH HEADER ===================== */
+.auth-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #ffffff;
+}
+
+.logo {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+}
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+  flex: 1;
+  margin-left: 40px;
+}
+
+.nav-links a {
+  font-size: 14px;
+  color: #666;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover {
+  color: #333;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.log-in-btn {
+  padding: 10px 20px;
+  border: 1px solid #d0d0d0;
+  background-color: #f5f5f5;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.log-in-btn:hover {
+  background-color: #e8e8e8;
+}
+
+.book-demo-btn {
+  padding: 10px 20px;
+  border: 1px solid #333;
+  background-color: #ffffff;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.book-demo-btn:hover {
+  background-color: #f5f5f5;
+}
+
+/* ===================== AUTH CONTENT ===================== */
+.auth-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-container h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+/* ===================== GOOGLE BUTTON ===================== */
+.google-btn {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #d0d0d0;
+  background-color: #ffffff;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.google-btn:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}
+
+.google-btn span {
+  font-size: 18px;
+}
+
+/* ===================== DIVIDER ===================== */
+.divider {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 13px;
+  color: #999;
+  position: relative;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 45%;
+  height: 1px;
+  background-color: #d0d0d0;
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+/* ===================== FORM GROUPS ===================== */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333;
+  background-color: #ffffff;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.form-group input::placeholder {
+  color: #999;
+}
+
+.form-group select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 20px;
+  padding-right: 36px;
+}
+
+/* ===================== FORM ROW ===================== */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* ===================== SUBMIT BUTTON ===================== */
+.submit-btn {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #333;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 10px;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background-color: #000;
+}
+
+.submit-btn:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+/* ===================== FORM FOOTER ===================== */
+.form-footer {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.form-footer p {
+  font-size: 13px;
+  color: #666;
+  margin: 8px 0;
+}
+
+.form-footer a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.form-footer a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+/* ===================== TERMS TEXT ===================== */
+.terms-text {
+  font-size: 12px;
+  color: #999;
+  text-align: center;
+  margin-top: 20px;
+  line-height: 1.5;
+}
+
+/* ===================== ERROR MESSAGE ===================== */
+.error-message {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  color: #c33;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* ===================== COMPANY INFO LAYOUT ===================== */
+.auth-content.company-info-layout {
+  display: flex;
+  justify-content: space-between;
+  gap: 60px;
+  align-items: flex-start;
+}
+
+.company-info-sidebar {
+  flex: 0 0 220px;
+  padding-top: 40px;
+}
+
+.company-info-sidebar h2 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 15px;
+  line-height: 1.2;
+}
+
+.company-info-sidebar p {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.form-container.company-form {
+  flex: 1;
+  max-width: 450px;
+}
+
+.form-container.company-form h1 {
+  display: none;
+}
+
+/* ===================== RESPONSIVE DESIGN ===================== */
+
+@media (max-width: 1024px) {
+  .auth-header {
+    padding: 15px 30px;
+    gap: 20px;
+  }
+
+  .nav-links {
+    margin-left: 20px;
+    gap: 20px;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+
+  .auth-content {
+    padding: 40px 20px;
+  }
+
+  .auth-content.company-info-layout {
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .company-info-sidebar {
+    flex: 1;
+    max-width: 100%;
+    padding-top: 20px;
+  }
+
+  .company-info-sidebar h2 {
+    font-size: 24px;
+  }
+
+  .form-container.company-form {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .auth-header {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .logo {
+    font-size: 16px;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    gap: 10px;
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .auth-buttons {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .log-in-btn,
+  .book-demo-btn {
+    flex: 1;
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  .auth-content {
+    padding: 30px 15px;
+  }
+
+  .form-container {
+    max-width: 100%;
+  }
+
+  .form-container h1 {
+    font-size: 24px;
+    margin-bottom: 25px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .company-info-sidebar h2 {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-header {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .logo {
+    font-size: 14px;
+  }
+
+  .nav-links {
+    gap: 8px;
+  }
+
+  .nav-links a {
+    font-size: 12px;
+  }
+
+  .auth-buttons {
+    gap: 8px;
+  }
+
+  .log-in-btn,
+  .book-demo-btn {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .auth-content {
+    padding: 20px 10px;
+  }
+
+  .form-container h1 {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .google-btn {
+    padding: 10px 12px;
+    font-size: 13px;
+    margin-bottom: 15px;
+  }
+
+  .google-btn span {
+    font-size: 16px;
+  }
+
+  .submit-btn {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .form-footer p {
+    font-size: 12px;
+  }
+
+  .terms-text {
+    font-size: 11px;
+    margin-top: 15px;
+  }
+
+  .company-info-sidebar h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .company-info-sidebar p {
+    font-size: 13px;
+  }
+}
