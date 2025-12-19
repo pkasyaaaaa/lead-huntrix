@@ -132,16 +132,6 @@
   font-size: 18px;
 }
 
-/* Logo Spin Animation */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 /* Logo */
 .logo {
   display: flex;
@@ -159,15 +149,8 @@
   max-width: 180px;
   height: auto;
   display: block;
-  transition: max-width 0.3s ease;
-}
-
-.side-logo-spin {
-  animation: spin 0.3s ease-in-out !important;
-}
-
-.full-logo {
-  animation: none !important;
+  transition: max-width 0.3s ease, transform 0.3s ease; 
+  transform: rotate(0deg);
 }
 
 /* Menu Items */
@@ -207,7 +190,7 @@
 }
 
 .prospect-finder-menu {
-  font-weight: 500;
+  font-weight: 600;
   border-bottom: 0;
   margin-bottom: 0;
 }

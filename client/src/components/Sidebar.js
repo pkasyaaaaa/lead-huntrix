@@ -36,16 +36,6 @@ const Sidebar = ({
     });
   };
 
-  const handleLogout = () => {
-    const confirmed = window.confirm('Are you sure you want to logout?');
-    if (confirmed) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('userId');
-      localStorage.removeItem('userEmail');
-      window.location.href = '/login';
-    }
-  };
-
   const addChip = (filterKey, value) => {
     if (!value.trim()) return;
     const currentValues = filters[filterKey] || [];
@@ -115,19 +105,10 @@ const Sidebar = ({
   return (
     <div className={`sidebar ${sidebarClosed ? 'closed' : ''}`}>
       <div className="logo">
-        {sidebarClosed ? (
-          <img
-            src={SIDE_LOGO_SRC}
-            alt="Company Logo"
-            className="side-logo-spin"
-          />
-        ) : (
-          <img
-            src={FULL_LOGO_SRC}
-            alt="Company Logo"
-            className="full-logo"
-          />
-        )}
+        <img
+          src={sidebarClosed ? SIDE_LOGO_SRC : FULL_LOGO_SRC}
+          alt="Company Logo"
+        />
       </div>
 
       <div className="prospect-finder-wrapper">
@@ -283,10 +264,6 @@ const Sidebar = ({
           <span className="icon"><i className="fas fa-list-ul"></i></span>
           <span>Your Prospect list</span>
           <span className="arrow"><i className="fas fa-chevron-right"></i></span>
-        </div>
-        <div className="menu-item logout-menu" onClick={handleLogout}>
-          <span className="icon"><i className="fas fa-sign-out-alt"></i></span>
-          <span>Logout</span>
         </div>
       </div>
 
