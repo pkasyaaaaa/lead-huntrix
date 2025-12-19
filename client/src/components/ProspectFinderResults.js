@@ -4,6 +4,7 @@ import './ProspectFinderResults.css';
 export default function ProspectFinderResults({ prospects, loading, onBack, onRefresh, searchQuery, setSearchQuery, onSearch }) {
   const [selectedProspects, setSelectedProspects] = useState([]);
   const [enriching, setEnriching] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState(null);
 
   // Debug logging
   console.log('ProspectFinderResults - prospects:', prospects);
@@ -43,6 +44,14 @@ export default function ProspectFinderResults({ prospects, loading, onBack, onRe
       alert('Enrichment feature coming soon! This will enrich the selected prospects with additional data.');
       setEnriching(false);
     }, 1500);
+  };
+
+  const handleCompanyClick = (prospect) => {
+    setSelectedCompany(prospect);
+  };
+
+  const closeCompanyModal = () => {
+    setSelectedCompany(null);
   };
 
   // Helper function to safely get data from Lusha response
@@ -174,7 +183,7 @@ export default function ProspectFinderResults({ prospects, loading, onBack, onRe
                       </td>
                       <td>{data.jobTitle}</td>
                       <td>
-                        <div className="company-info">
+                        <div className="company-info" onClick={() => handleCompanyClick(prospect)} style={{ cursor: 'pointer' }}>
                           {data.companyLogo && (
                             <div className="company-logo">
                               <img
@@ -188,7 +197,7 @@ export default function ProspectFinderResults({ prospects, loading, onBack, onRe
                             </div>
                           )}
                           <div>
-                            <div className="company-name">{data.companyName}</div>
+                            <div className="company-name" title="Click to view company details">{data.companyName}</div>
                           </div>
                         </div>
                       </td>
@@ -231,6 +240,107 @@ export default function ProspectFinderResults({ prospects, loading, onBack, onRe
         </div>
       )}
       </div>
+
+      {/* Company Details Modal */}
+      {selectedCompany && (
+        <div className="company-modal-overlay" onClick={closeCompanyModal}>
+          <div className="company-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={closeCompanyModal}>
+              <i className="fas fa-times"></i>
+            </button>
+            
+            <div className="modal-header">
+              {selectedCompany.logoUrl && (
+                <img
+                  src={selectedCompany.logoUrl}
+                  alt={selectedCompany.companyName}
+                  className="modal-company-logo"
+                  onError={(e) => {
+                    e.target.src = "https://ui-avatars.com/api/?name=" + encodeURIComponent(selectedCompany.companyName) + "&size=80&background=ddd&color=555";
+                  }}
+                />
+              )}
+              <div>
+                <h2>{selectedCompany.companyName}</h2>
+                {selectedCompany.fqdn && (
+                  <a href={`https://${selectedCompany.fqdn}`} target="_blank" rel="noopener noreferrer" className="company-website">
+                    <i className="fas fa-globe"></i> {selectedCompany.fqdn}
+                  </a>
+                )}
+              </div>
+            </div>
+
+            <div className="modal-body">
+              {selectedCompany.companyDescription && (
+                <div className="modal-section">
+                  <h3><i className="fas fa-info-circle"></i> Description</h3>
+                  <p>{selectedCompany.companyDescription}</p>
+                </div>
+              )}
+
+              <div className="modal-section">
+                <h3><i className="fas fa-database"></i> Available Data</h3>
+                <div className="data-availability-grid">
+                  <div className={`data-item ${selectedCompany.hasCompanyEmployeesCount ? 'available' : 'unavailable'}`}>
+                    <i className="fas fa-users"></i>
+                    <span>Employees Count</span>
+                  </div>
+                  <div className={`data-item ${selectedCompany.hasCompanyRevenue ? 'available' : 'unavailable'}`}>
+                    <i className="fas fa-dollar-sign"></i>
+                    <span>Revenue</span>
+                  </div>
+                  <div className={`data-item ${selectedCompany.hasCompanyMainIndustry ? 'available' : 'unavailable'}`}>
+                    <i className="fas fa-industry"></i>
+                    <span>Main Industry</span>
+                  </div>
+                  <div className={`data-item ${selectedCompany.hasCompanySubIndustry ? 'available' : 'unavailable'}`}>
+                    <i className="fas fa-sitemap"></i>
+                    <span>Sub Industry</span>
+                  </div>
+                  <div className={`data-item ${selectedCompany.hasCompanyFunding ? 'available' : 'unavailable'}`}>
+                    <i className="fas fa-money-bill-wave"></i>
+                    <span>Funding</span>
+                  </div>
+                  <div className={`data-item ${selectedCompany.hasCompanyIntent ? 'available' : 'unavailable'}`}>
+                    <i className="fas fa-bullseye"></i>
+                    <span>Intent Data</span>
+                  </div>
+                  <div className={`data-item ${selectedCompany.hasCompanyTechnologies ? 'available' : 'unavailable'}`}>
+                    <i className="fas fa-laptop-code"></i>
+                    <span>Technologies</span>
+                  </div>
+                  <div className={`data-item ${selectedCompany.hasCompanyCity ? 'available' : 'unavailable'}`}>
+                    <i className="fas fa-map-marker-alt"></i>
+                    <span>City</span>
+                  </div>
+                  <div className={`data-item ${selectedCompany.hasCompanyCountry ? 'available' : 'unavailable'}`}>
+                    <i className="fas fa-flag"></i>
+                    <span>Country</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-section">
+                <h3><i className="fas fa-id-badge"></i> Company IDs</h3>
+                <div className="company-ids">
+                  {selectedCompany.companyId && (
+                    <div className="id-item">
+                      <span className="id-label">Company ID:</span>
+                      <span className="id-value">{selectedCompany.companyId}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button className="modal-btn primary" onClick={closeCompanyModal}>
+                <i className="fas fa-check"></i> Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
