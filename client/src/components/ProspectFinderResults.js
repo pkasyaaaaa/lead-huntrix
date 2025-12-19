@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import './ProspectFinderResults.css';
 
-export default function ProspectFinderResults({ prospects, loading, onBack, searchQuery, setSearchQuery, onSearch }) {
+export default function ProspectFinderResults({ prospects, loading, onBack, onRefresh, searchQuery, setSearchQuery, onSearch }) {
   const [selectedProspects, setSelectedProspects] = useState([]);
   const [enriching, setEnriching] = useState(false);
+
+  // Debug logging
+  console.log('ProspectFinderResults - prospects:', prospects);
+  console.log('ProspectFinderResults - loading:', loading);
+  console.log('ProspectFinderResults - prospects length:', prospects?.length);
 
   const clearSearch = () => {
     setSearchQuery('');
@@ -43,18 +48,18 @@ export default function ProspectFinderResults({ prospects, loading, onBack, sear
   // Helper function to safely get data from Lusha response
   const getProspectData = (prospect) => {
     return {
-      id: prospect.id || Math.random().toString(),
+      id: prospect.contactId || prospect.personId?.toString() || Math.random().toString(),
       name: prospect.name || prospect.fullName || 'N/A',
       jobTitle: prospect.jobTitle || prospect.position || 'N/A',
-      companyName: prospect.company?.name || prospect.companyName || 'N/A',
-      companyLogo: prospect.company?.logoUrl || prospect.company?.logo || null,
+      companyName: prospect.companyName || prospect.company?.name || 'N/A',
+      companyLogo: prospect.logoUrl || prospect.company?.logoUrl || prospect.company?.logo || null,
       email: prospect.email || prospect.emails?.[0] || null,
       phone: prospect.phone || prospect.phoneNumbers?.[0] || null,
       location: prospect.location || prospect.city || prospect.country || 'N/A',
       linkedinUrl: prospect.linkedinUrl || prospect.linkedin || null,
       // Lusha API specific fields
-      hasEmail: prospect.hasEmail || false,
-      hasPhone: prospect.hasPhone || false,
+      hasEmail: prospect.hasWorkEmail || prospect.hasEmails || prospect.hasEmail || false,
+      hasPhone: prospect.hasPhones || prospect.hasPhone || false,
       hasDirectPhone: prospect.hasDirectPhone || false
     };
   };
@@ -96,6 +101,15 @@ export default function ProspectFinderResults({ prospects, loading, onBack, sear
               >
                 <i className={enriching ? "fas fa-spinner fa-spin" : "fas fa-sparkles"}></i> 
                 {enriching ? ' Enriching...' : ' Enrich Selected'}
+              </button>
+              <button 
+                className="download-btn" 
+                onClick={onRefresh}
+                disabled={loading}
+                title="Refresh results from Lusha API (uses credits)"
+                style={{ marginRight: '10px' }}
+              >
+                <i className={loading ? "fas fa-spinner fa-spin" : "fas fa-sync-alt"}></i> Refresh
               </button>
               <button className="download-btn" disabled={selectedProspects.length === 0}>
                 <i className="fas fa-download"></i> Download ({selectedProspects.length})

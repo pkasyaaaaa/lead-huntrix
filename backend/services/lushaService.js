@@ -14,38 +14,11 @@ const lushaAPI = axios.create({
 });
 
 // ============================================
-// CONTACT FILTER ENDPOINTS
+// CONTACT FILTER ENDPOINTS 
 // ============================================
 
-/**
- * Get list of available departments for contact filtering
- */
-async function getContactDepartments() {
-  try {
-    const response = await lushaAPI.get('/prospecting/filters/contacts/departments');
-    return { success: true, data: response.data };
-  } catch (error) {
-    console.error('Error fetching contact departments:', error.response?.data || error.message);
-    return { success: false, error: error.response?.data || error.message };
-  }
-}
+// Get list of available data points for contact filtering
 
-/**
- * Get list of available seniority levels for contact filtering
- */
-async function getContactSeniority() {
-  try {
-    const response = await lushaAPI.get('/prospecting/filters/contacts/seniority');
-    return { success: true, data: response.data };
-  } catch (error) {
-    console.error('Error fetching contact seniority:', error.response?.data || error.message);
-    return { success: false, error: error.response?.data || error.message };
-  }
-}
-
-/**
- * Get list of available data points for contact filtering
- */
 async function getContactDataPoints() {
   try {
     const response = await lushaAPI.get('/prospecting/filters/contacts/existing_data_points');
@@ -56,9 +29,8 @@ async function getContactDataPoints() {
   }
 }
 
-/**
- * Get list of all available countries for contact filtering
- */
+// Get list of all available countries for contact filtering
+
 async function getContactCountries() {
   try {
     const response = await lushaAPI.get('/prospecting/filters/contacts/all_countries');
@@ -69,9 +41,8 @@ async function getContactCountries() {
   }
 }
 
-/**
- * Search for locations by text for contact filtering
- */
+// Search for locations by text for contact filtering
+
 async function searchContactLocations(searchText) {
   try {
     const response = await lushaAPI.post('/prospecting/filters/contacts/locations', {
@@ -85,12 +56,13 @@ async function searchContactLocations(searchText) {
 }
 
 // ============================================
-// COMPANY FILTER ENDPOINTS
+// COMPANY FILTER ENDPOINTS (Currently Unused - Using Predefined Data or Disabled)
 // ============================================
 
-/**
- * Search for company names by text
- */
+// Industries - Disabled in frontend
+// Revenues - Disabled in frontend
+
+// Search for company names by text
 async function searchCompanyNames(searchText) {
   try {
     const response = await lushaAPI.post('/prospecting/filters/companies/names', {
@@ -103,48 +75,8 @@ async function searchCompanyNames(searchText) {
   }
 }
 
-/**
- * Get list of available industries for company filtering
- */
-async function getCompanyIndustries() {
-  try {
-    const response = await lushaAPI.get('/prospecting/filters/companies/industries_labels');
-    return { success: true, data: response.data };
-  } catch (error) {
-    console.error('Error fetching company industries:', error.response?.data || error.message);
-    return { success: false, error: error.response?.data || error.message };
-  }
-}
+//Search for company locations by text
 
-/**
- * Get list of available company size ranges
- */
-async function getCompanySizes() {
-  try {
-    const response = await lushaAPI.get('/prospecting/filters/companies/sizes');
-    return { success: true, data: response.data };
-  } catch (error) {
-    console.error('Error fetching company sizes:', error.response?.data || error.message);
-    return { success: false, error: error.response?.data || error.message };
-  }
-}
-
-/**
- * Get list of available revenue ranges
- */
-async function getCompanyRevenues() {
-  try {
-    const response = await lushaAPI.get('/prospecting/filters/companies/revenues');
-    return { success: true, data: response.data };
-  } catch (error) {
-    console.error('Error fetching company revenues:', error.response?.data || error.message);
-    return { success: false, error: error.response?.data || error.message };
-  }
-}
-
-/**
- * Search for company locations by text
- */
 async function searchCompanyLocations(searchText) {
   try {
     const response = await lushaAPI.post('/prospecting/filters/companies/locations', {
@@ -157,67 +89,17 @@ async function searchCompanyLocations(searchText) {
   }
 }
 
-/**
- * Get list of available SIC codes
- */
-async function getCompanySICCodes() {
-  try {
-    const response = await lushaAPI.get('/prospecting/filters/companies/sics');
-    return { success: true, data: response.data };
-  } catch (error) {
-    console.error('Error fetching company SIC codes:', error.response?.data || error.message);
-    return { success: false, error: error.response?.data || error.message };
-  }
-}
-
-/**
- * Get list of available NAICS codes
- */
-async function getCompanyNAICSCodes() {
-  try {
-    const response = await lushaAPI.get('/prospecting/filters/companies/naics');
-    return { success: true, data: response.data };
-  } catch (error) {
-    console.error('Error fetching company NAICS codes:', error.response?.data || error.message);
-    return { success: false, error: error.response?.data || error.message };
-  }
-}
-
-/**
- * Get list of available intent topics
- */
-async function getCompanyIntentTopics() {
-  try {
-    const response = await lushaAPI.get('/prospecting/filters/companies/intent_topics');
-    return { success: true, data: response.data };
-  } catch (error) {
-    console.error('Error fetching company intent topics:', error.response?.data || error.message);
-    return { success: false, error: error.response?.data || error.message };
-  }
-}
-
-/**
- * Search for technologies by text
- */
-async function searchCompanyTechnologies(searchText) {
-  try {
-    const response = await lushaAPI.post('/prospecting/filters/companies/technologies', {
-      text: searchText
-    });
-    return { success: true, data: response.data };
-  } catch (error) {
-    console.error('Error searching company technologies:', error.response?.data || error.message);
-    return { success: false, error: error.response?.data || error.message };
-  }
-}
+// The following endpoints are available but currently unused:
+// - getCompanyIndustries (industries filter disabled)
+// - getCompanyRevenues (revenues filter disabled)
+// - getCompanySICCodes, getCompanyNAICSCodes, getCompanyIntentTopics, searchCompanyTechnologies (not implemented in UI)
 
 // ============================================
 // SEARCH ENDPOINTS
 // ============================================
 
-/**
- * Search for contacts using various filters
- */
+// Search for contacts using various filters
+
 async function searchContacts(filters, page = 0, size = 25) {
   try {
     const requestBody = {
@@ -229,7 +111,16 @@ async function searchContacts(filters, page = 0, size = 25) {
     };
 
     const response = await lushaAPI.post('/prospecting/contact/search', requestBody);
-    return { success: true, data: response.data };
+    
+    // Log headers for credit information
+    console.log('\n' + '🔍 LUSHA API RESPONSE HEADERS '.padEnd(80, '='));
+    console.log('Headers:', JSON.stringify(response.headers, null, 2));
+    console.log('Available Credits:', response.headers['x-credits-available'] || 'Not provided');
+    console.log('Credits Used:', response.headers['x-credits-used'] || 'Not provided');
+    console.log('Rate Limit Remaining:', response.headers['x-ratelimit-remaining'] || 'Not provided');
+    console.log('='.repeat(80) + '\n');
+    
+    return { success: true, data: response.data, headers: response.headers };
   } catch (error) {
     console.error('Error searching contacts:', error.response?.data || error.message);
     return { success: false, error: error.response?.data || error.message };
@@ -258,25 +149,16 @@ async function searchCompanies(filters, page = 0, size = 25) {
 }
 
 module.exports = {
-  // Contact filters
-  getContactDepartments,
-  getContactSeniority,
+  // Contact filters (still potentially useful)
   getContactDataPoints,
   getContactCountries,
   searchContactLocations,
   
-  // Company filters
+  // Company filters (still potentially useful)
   searchCompanyNames,
-  getCompanyIndustries,
-  getCompanySizes,
-  getCompanyRevenues,
   searchCompanyLocations,
-  getCompanySICCodes,
-  getCompanyNAICSCodes,
-  getCompanyIntentTopics,
-  searchCompanyTechnologies,
   
-  // Search
+  // Search (actively used)
   searchContacts,
   searchCompanies
 };

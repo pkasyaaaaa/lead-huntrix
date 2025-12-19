@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import industryData from '../data/industryData.json';
 
 const Sidebar = ({
   activeView,
@@ -16,13 +17,78 @@ const Sidebar = ({
   const FULL_LOGO_SRC = '/image/logo.png';
   const SIDE_LOGO_SRC = '/image/side_logo.png';
 
+  // Predefined filter options (to avoid using Lusha API quota)
+  const PREDEFINED_DEPARTMENTS = [
+    'Business Development',
+    'Consulting',
+    'Customer Service',
+    'Engineering & Technical',
+    'Finance',
+    'General Management',
+    'Health Care & Medical',
+    'Human Resources',
+    'Information Technology',
+    'Legal',
+    'Marketing',
+    'Operations',
+    'Other',
+    'Product',
+    'Research & Analytics',
+    'Sales'
+  ];
+
+  // Seniority mapping: display text -> Lusha ID
+  const SENIORITY_MAPPING = {
+    'C-suite': '10',
+    'Founder': '9',
+    'Partner': '8',
+    'Vice President': '7',
+    'Director': '6',
+    'Manager': '5',
+    'Senior': '4',
+    'Entry': '3',
+    'Intern': '2',
+    'Other': '1'
+  };
+
+  const PREDEFINED_SENIORITY = Object.keys(SENIORITY_MAPPING);
+
+  // Predefined company sizes (exact format for Lusha API)
+  const PREDEFINED_SIZES = [
+    { min: 1, max: 10, label: '1-10' },
+    { min: 11, max: 50, label: '11-50' },
+    { min: 51, max: 200, label: '51-200' },
+    { min: 201, max: 500, label: '201-500' },
+    { min: 501, max: 1000, label: '501-1000' },
+    { min: 1001, max: 5000, label: '1001-5000' },
+    { min: 5001, max: 10000, label: '5001-10000' },
+    { min: 10001, max: 100000, label: '10001-100000' },
+    { min: 100001, label: '100001+' }
+  ];
+
+    // Predefined company revenue (exact format for Lusha API)
+    const PREDEFINED_REVENUES = [
+      { min: 1, max: 1000000, label: '1 - 1M' },
+      { min: 1000000, max: 5000000, label: '1M - 5M' },
+      { min: 5000000, max: 10000000, label: '5M - 10M' },
+      { min: 10000000, max: 50000000, label: '10M - 50M' },
+      { min: 50000000, max: 100000000, label: '50M - 100M' },
+      { min: 100000000, max: 250000000, label: '100M - 250M' },
+      { min: 250000000, max: 500000000, label: '250M - 500M' },
+      { min: 500000000, max: 1000000000, label: '500M - 1B' },
+      { min: 1000000000, max: 10000000000, label: '1B - 10B' },
+      { min: 500000000, max: 10000000000, label: '500M - 10B' },
+      { min: 10000000000, max: 100000000000, label: '10B - 100B' },
+      { min: 100000000000, label: '100B+' }
+    ];
+
   // State for filter options from Lusha API
   const [filterOptions, setFilterOptions] = useState({
-    departments: [],
-    seniority: [],
+    departments: PREDEFINED_DEPARTMENTS,
+    seniority: PREDEFINED_SENIORITY,
+    sizes: PREDEFINED_SIZES,
     industries: [],
-    sizes: [],
-    revenues: [],
+    revenues: PREDEFINED_REVENUES,
     countries: []
   });
 
@@ -46,85 +112,36 @@ const Sidebar = ({
     });
   };
 
-  // Fetch departments from Lusha API
-  const fetchDepartments = async () => {
-    if (filterOptions.departments.length > 0) return; // Already loaded
-    
-    setLoadingFilters(prev => ({ ...prev, departments: true }));
-    try {
-      const response = await axios.get('/api/lusha/filters/contacts/departments');
-      const values = extractValues(response.data);
-      setFilterOptions(prev => ({ ...prev, departments: values }));
-    } catch (error) {
-      console.error('Error fetching departments:', error);
-    } finally {
-      setLoadingFilters(prev => ({ ...prev, departments: false }));
-    }
-  };
+  // Departments, Seniority, and Company Sizes are now predefined - no need to fetch
 
-  // Fetch seniority levels from Lusha API
-  const fetchSeniority = async () => {
-    if (filterOptions.seniority.length > 0) return; // Already loaded
-    
-    setLoadingFilters(prev => ({ ...prev, seniority: true }));
+  // Load industries from imported JSON data
+  useEffect(() => {
     try {
-      const response = await axios.get('/api/lusha/filters/contacts/seniority');
-      const values = extractValues(response.data);
-      setFilterOptions(prev => ({ ...prev, seniority: values }));
+      console.log('Loading industries from imported data');
+      
+      // Extract both main industries and sub-industries with subtle labels
+      const allIndustries = [];
+      
+      industryData.forEach(item => {
+        // Add main industry with label
+        allIndustries.push(`${item.main_industry} (Main)`);
+        
+        // Add sub-industries with label
+        if (item.sub_industries && Array.isArray(item.sub_industries)) {
+          item.sub_industries.forEach(subInd => {
+            if (subInd.value) {
+              allIndustries.push(`${subInd.value} (Sub)`);
+            }
+          });
+        }
+      });
+      
+      console.log('Loaded industries (main + sub):', allIndustries);
+      setFilterOptions(prev => ({ ...prev, industries: allIndustries }));
     } catch (error) {
-      console.error('Error fetching seniority:', error);
-    } finally {
-      setLoadingFilters(prev => ({ ...prev, seniority: false }));
+      console.error('Error loading industries:', error);
     }
-  };
-
-  // Fetch industries from Lusha API
-  const fetchIndustries = async () => {
-    if (filterOptions.industries.length > 0) return; // Already loaded
-    
-    setLoadingFilters(prev => ({ ...prev, industries: true }));
-    try {
-      const response = await axios.get('/api/lusha/filters/companies/industries');
-      const values = extractValues(response.data);
-      setFilterOptions(prev => ({ ...prev, industries: values }));
-    } catch (error) {
-      console.error('Error fetching industries:', error);
-    } finally {
-      setLoadingFilters(prev => ({ ...prev, industries: false }));
-    }
-  };
-
-  // Fetch company sizes from Lusha API
-  const fetchSizes = async () => {
-    if (filterOptions.sizes.length > 0) return; // Already loaded
-    
-    setLoadingFilters(prev => ({ ...prev, sizes: true }));
-    try {
-      const response = await axios.get('/api/lusha/filters/companies/sizes');
-      const values = extractValues(response.data);
-      setFilterOptions(prev => ({ ...prev, sizes: values }));
-    } catch (error) {
-      console.error('Error fetching sizes:', error);
-    } finally {
-      setLoadingFilters(prev => ({ ...prev, sizes: false }));
-    }
-  };
-
-  // Fetch company revenues from Lusha API
-  const fetchRevenues = async () => {
-    if (filterOptions.revenues.length > 0) return; // Already loaded
-    
-    setLoadingFilters(prev => ({ ...prev, revenues: true }));
-    try {
-      const response = await axios.get('/api/lusha/filters/companies/revenues');
-      const values = extractValues(response.data);
-      setFilterOptions(prev => ({ ...prev, revenues: values }));
-    } catch (error) {
-      console.error('Error fetching revenues:', error);
-    } finally {
-      setLoadingFilters(prev => ({ ...prev, revenues: false }));
-    }
-  };
+  }, []);
 
   // Fetch countries from Lusha API
   const fetchCountries = async () => {
@@ -182,38 +199,89 @@ const Sidebar = ({
 
   const ChipInput = ({ filterKey, placeholder, datalistOptions = null, onFocus = null }) => {
     const [inputValue, setInputValue] = useState('');
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+
+    // Filter suggestions based on user input
+    useEffect(() => {
+      console.log('ChipInput - datalistOptions:', datalistOptions);
+      console.log('ChipInput - inputValue:', inputValue);
+      
+      if (datalistOptions && datalistOptions.length > 0 && inputValue.trim()) {
+        const filtered = datalistOptions.filter(option =>
+          option.toLowerCase().includes(inputValue.toLowerCase())
+        );
+        console.log('Filtered suggestions:', filtered);
+        setFilteredSuggestions(filtered);
+        setShowSuggestions(filtered.length > 0);
+      } else {
+        setFilteredSuggestions([]);
+        setShowSuggestions(false);
+      }
+    }, [inputValue, datalistOptions]);
 
     const handleKeyDown = (e) => {
       if (e.key === 'Enter' || e.key === ',') {
         e.preventDefault();
-        addChip(filterKey, inputValue.replace(',', ''));
+        if (filteredSuggestions.length > 0) {
+          // Use first suggestion if available
+          addChip(filterKey, filteredSuggestions[0]);
+        } else {
+          addChip(filterKey, inputValue.replace(',', ''));
+        }
         setInputValue('');
+        setShowSuggestions(false);
       }
     };
 
     const handleBlur = () => {
-      if (inputValue.trim()) {
-        addChip(filterKey, inputValue);
-        setInputValue('');
-      }
+      // Delay to allow click on suggestion
+      setTimeout(() => {
+        if (inputValue.trim() && filteredSuggestions.length > 0) {
+          addChip(filterKey, filteredSuggestions[0]);
+          setInputValue('');
+        } else if (inputValue.trim()) {
+          addChip(filterKey, inputValue);
+          setInputValue('');
+        }
+        setShowSuggestions(false);
+      }, 200);
     };
 
     const handleFocus = () => {
       if (onFocus) {
         onFocus();
       }
+      if (datalistOptions && inputValue.trim()) {
+        setShowSuggestions(true);
+      }
+    };
+
+    const handleSuggestionClick = (suggestion) => {
+      addChip(filterKey, suggestion);
+      setInputValue('');
+      setShowSuggestions(false);
     };
 
     return (
-      <div className="chip-container">
-        {(filters[filterKey] || []).map((chip, index) => (
-          <div key={index} className="chip">
-            {chip}
-            <span className="chip-delete" onClick={() => removeChip(filterKey, chip)}>
-              <i className="fas fa-times"></i>
-            </span>
-          </div>
-        ))}
+      <div className="chip-container" style={{ position: 'relative' }}>
+        {(filters[filterKey] || []).map((chip, index) => {
+          // Determine chip color class based on industry type
+          const isIndustry = filterKey === 'industries';
+          const isMain = isIndustry && chip.includes('(Main)');
+          const isSub = isIndustry && chip.includes('(Sub)');
+          const chipClass = isMain ? 'chip industry-main' : isSub ? 'chip industry-sub' : 'chip';
+          const displayText = chip.replace(/\s*\((Main|Sub)\)/, '');
+          
+          return (
+            <div key={index} className={chipClass}>
+              {displayText}
+              <span className="chip-delete" onClick={() => removeChip(filterKey, chip)}>
+                <i className="fas fa-times"></i>
+              </span>
+            </div>
+          );
+        })}
         <input
           type="text"
           value={inputValue}
@@ -222,14 +290,29 @@ const Sidebar = ({
           onBlur={handleBlur}
           onFocus={handleFocus}
           placeholder={placeholder}
-          list={datalistOptions ? `${filterKey}-options` : undefined}
         />
-        {datalistOptions && (
-          <datalist id={`${filterKey}-options`}>
-            {datalistOptions.map((option, index) => (
-              <option key={index} value={option} />
-            ))}
-          </datalist>
+        {showSuggestions && filteredSuggestions.length > 0 && (
+          <div className="autocomplete-suggestions">
+            {filteredSuggestions.slice(0, 10).map((suggestion, index) => {
+              // Check if suggestion has (Main) or (Sub) label
+              const hasLabel = suggestion.includes('(Main)') || suggestion.includes('(Sub)');
+              const mainText = hasLabel ? suggestion.replace(/\s*\((Main|Sub)\)/, '') : suggestion;
+              const labelText = suggestion.includes('(Main)') ? 'Main' : suggestion.includes('(Sub)') ? 'Sub' : null;
+              const labelClass = labelText ? labelText.toLowerCase() : '';
+              
+              return (
+                <div
+                  key={index}
+                  className="suggestion-item"
+                  onMouseDown={(e) => e.preventDefault()} // Prevent blur
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
+                  <span>{mainText}</span>
+                  {labelText && <span className={`suggestion-label ${labelClass}`}>{labelText}</span>}
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
     );
@@ -282,9 +365,7 @@ const Sidebar = ({
                 filterKey="managementLevels"
                 placeholder="Select management level"
                 datalistOptions={filterOptions.seniority}
-                onFocus={fetchSeniority}
               />
-              {loadingFilters.seniority && <small>Loading...</small>}
             </div>
           </div>
 
@@ -296,9 +377,7 @@ const Sidebar = ({
                 filterKey="departments"
                 placeholder="Select department"
                 datalistOptions={filterOptions.departments}
-                onFocus={fetchDepartments}
               />
-              {loadingFilters.departments && <small>Loading...</small>}
             </div>
           </div>
 
@@ -332,9 +411,7 @@ const Sidebar = ({
                 filterKey="industries"
                 placeholder="Select industry"
                 datalistOptions={filterOptions.industries}
-                onFocus={fetchIndustries}
               />
-              {loadingFilters.industries && <small>Loading...</small>}
             </div>
           </div>
 
@@ -343,22 +420,23 @@ const Sidebar = ({
             <div className="filter-item-content">
               <label>Size</label>
               <select 
-                value={filters.companySizes?.[0] || ""} 
+                value={filters.companySizes?.[0] ? JSON.stringify(filters.companySizes[0]) : ""} 
                 onChange={(e) => {
                   if (e.target.value) {
-                    setFilters({ ...filters, companySizes: [e.target.value] });
+                    const sizeObj = JSON.parse(e.target.value);
+                    setFilters({ ...filters, companySizes: [sizeObj] });
                   } else {
                     setFilters({ ...filters, companySizes: [] });
                   }
                 }}
-                onFocus={fetchSizes}
               >
                 <option value="">Choose number of employees</option>
                 {filterOptions.sizes.map((size, index) => (
-                  <option key={index} value={size}>{size}</option>
+                  <option key={index} value={JSON.stringify({ min: size.min, max: size.max })}>
+                    {size.label}
+                  </option>
                 ))}
               </select>
-              {loadingFilters.sizes && <small>Loading...</small>}
             </div>
           </div>
 
@@ -367,22 +445,23 @@ const Sidebar = ({
             <div className="filter-item-content">
               <label>Revenue</label>
               <select 
-                value={filters.companyRevenues?.[0] || ""} 
+                value={filters.revenues?.[0] ? JSON.stringify(filters.revenues[0]) : ""} 
                 onChange={(e) => {
                   if (e.target.value) {
-                    setFilters({ ...filters, companyRevenues: [e.target.value] });
+                    const sizeObj = JSON.parse(e.target.value);
+                    setFilters({ ...filters, revenues: [sizeObj] });
                   } else {
-                    setFilters({ ...filters, companyRevenues: [] });
+                    setFilters({ ...filters, revenues: [] });
                   }
                 }}
-                onFocus={fetchRevenues}
               >
-                <option value="">Select company's revenue range</option>
+                <option value="">Choose revenue range</option>
                 {filterOptions.revenues.map((revenue, index) => (
-                  <option key={index} value={revenue}>{revenue}</option>
+                  <option key={index} value={JSON.stringify({ min: revenue.min, max: revenue.max })}>
+                    {revenue.label}
+                  </option>
                 ))}
               </select>
-              {loadingFilters.revenues && <small>Loading...</small>}
             </div>
           </div>
 

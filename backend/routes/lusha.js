@@ -5,28 +5,10 @@ const lushaService = require('../services/lushaService');
 // ============================================
 // CONTACT FILTER ENDPOINTS
 // ============================================
+// Note: Departments and Seniority use predefined data in frontend to save API quota
+// Only keeping actively used endpoints
 
-// Get list of available departments for contact filtering
-router.get('/filters/contacts/departments', async (req, res) => {
-  const result = await lushaService.getContactDepartments();
-  if (result.success) {
-    res.json(result.data);
-  } else {
-    res.status(500).json({ error: result.error });
-  }
-});
-
-// Get list of available seniority levels for contact filtering
-router.get('/filters/contacts/seniority', async (req, res) => {
-  const result = await lushaService.getContactSeniority();
-  if (result.success) {
-    res.json(result.data);
-  } else {
-    res.status(500).json({ error: result.error });
-  }
-});
-
-// Get list of available data points for contact filtering
+// Get list of available data points for contact filtering (reserved for future use)
 router.get('/filters/contacts/datapoints', async (req, res) => {
   const result = await lushaService.getContactDataPoints();
   if (result.success) {
@@ -36,7 +18,7 @@ router.get('/filters/contacts/datapoints', async (req, res) => {
   }
 });
 
-// Get list of all available countries for contact filtering
+// Get list of all available countries for contact filtering (reserved for future use)
 router.get('/filters/contacts/countries', async (req, res) => {
   const result = await lushaService.getContactCountries();
   if (result.success) {
@@ -46,7 +28,7 @@ router.get('/filters/contacts/countries', async (req, res) => {
   }
 });
 
-// Search for locations by text for contact filtering
+// Search for locations by text for contact filtering (actively used)
 router.post('/filters/contacts/locations', async (req, res) => {
   const { text } = req.body;
   if (!text) {
@@ -64,8 +46,10 @@ router.post('/filters/contacts/locations', async (req, res) => {
 // ============================================
 // COMPANY FILTER ENDPOINTS
 // ============================================
+// Note: Industries, Sizes, and Revenues use predefined data or are disabled in frontend
+// Only keeping actively used endpoints
 
-// Search for company names by text
+// Search for company names by text (actively used)
 router.post('/filters/companies/names', async (req, res) => {
   const { text } = req.body;
   if (!text) {
@@ -80,37 +64,7 @@ router.post('/filters/companies/names', async (req, res) => {
   }
 });
 
-// Get list of available industries for company filtering
-router.get('/filters/companies/industries', async (req, res) => {
-  const result = await lushaService.getCompanyIndustries();
-  if (result.success) {
-    res.json(result.data);
-  } else {
-    res.status(500).json({ error: result.error });
-  }
-});
-
-// Get list of available company size ranges
-router.get('/filters/companies/sizes', async (req, res) => {
-  const result = await lushaService.getCompanySizes();
-  if (result.success) {
-    res.json(result.data);
-  } else {
-    res.status(500).json({ error: result.error });
-  }
-});
-
-// Get list of available revenue ranges
-router.get('/filters/companies/revenues', async (req, res) => {
-  const result = await lushaService.getCompanyRevenues();
-  if (result.success) {
-    res.json(result.data);
-  } else {
-    res.status(500).json({ error: result.error });
-  }
-});
-
-// Search for company locations by text
+// Search for company locations by text (reserved for future use)
 router.post('/filters/companies/locations', async (req, res) => {
   const { text } = req.body;
   if (!text) {
@@ -118,51 +72,6 @@ router.post('/filters/companies/locations', async (req, res) => {
   }
   
   const result = await lushaService.searchCompanyLocations(text);
-  if (result.success) {
-    res.json(result.data);
-  } else {
-    res.status(500).json({ error: result.error });
-  }
-});
-
-// Get list of available SIC codes
-router.get('/filters/companies/sic-codes', async (req, res) => {
-  const result = await lushaService.getCompanySICCodes();
-  if (result.success) {
-    res.json(result.data);
-  } else {
-    res.status(500).json({ error: result.error });
-  }
-});
-
-// Get list of available NAICS codes
-router.get('/filters/companies/naics-codes', async (req, res) => {
-  const result = await lushaService.getCompanyNAICSCodes();
-  if (result.success) {
-    res.json(result.data);
-  } else {
-    res.status(500).json({ error: result.error });
-  }
-});
-
-// Get list of available intent topics
-router.get('/filters/companies/intent-topics', async (req, res) => {
-  const result = await lushaService.getCompanyIntentTopics();
-  if (result.success) {
-    res.json(result.data);
-  } else {
-    res.status(500).json({ error: result.error });
-  }
-});
-
-// Search for technologies by text
-router.post('/filters/companies/technologies', async (req, res) => {
-  const { text } = req.body;
-  if (!text) {
-    return res.status(400).json({ error: 'Text parameter is required' });
-  }
-  
-  const result = await lushaService.searchCompanyTechnologies(text);
   if (result.success) {
     res.json(result.data);
   } else {
