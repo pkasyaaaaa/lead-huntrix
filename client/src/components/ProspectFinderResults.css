@@ -1176,3 +1176,266 @@
     font-size: 14px;
   }
 }
+
+/* Company Details Modal */
+.company-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.company-modal {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease;
+  position: relative;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #f5f5f5;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  color: #666;
+  transition: all 0.2s ease;
+  z-index: 1;
+}
+
+.modal-close-btn:hover {
+  background: #e0e0e0;
+  color: #333;
+  transform: scale(1.1);
+}
+
+.modal-header {
+  padding: 30px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.modal-company-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: #f9f9f9;
+  padding: 8px;
+  border: 1px solid #eee;
+}
+
+.modal-header h2 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  color: #333;
+  font-weight: 600;
+}
+
+.company-website {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+}
+
+.company-website:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+.modal-body {
+  padding: 30px;
+}
+
+.modal-section {
+  margin-bottom: 30px;
+}
+
+.modal-section:last-child {
+  margin-bottom: 0;
+}
+
+.modal-section h3 {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  color: #333;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-section h3 i {
+  color: #007bff;
+  font-size: 14px;
+}
+
+.modal-section p {
+  margin: 0;
+  line-height: 1.6;
+  color: #666;
+  font-size: 14px;
+}
+
+.data-availability-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.data-item {
+  padding: 12px 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.data-item.available {
+  background: #e8f5e9;
+  border: 1px solid #a5d6a7;
+  color: #2e7d32;
+}
+
+.data-item.available i {
+  color: #4caf50;
+}
+
+.data-item.unavailable {
+  background: #fafafa;
+  border: 1px solid #e0e0e0;
+  color: #999;
+}
+
+.data-item.unavailable i {
+  color: #ccc;
+}
+
+.data-item span {
+  font-weight: 500;
+}
+
+.company-ids {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.id-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  background: #f9f9f9;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.id-label {
+  font-weight: 600;
+  color: #666;
+}
+
+.id-value {
+  color: #333;
+  font-family: 'Courier New', monospace;
+  background: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+.modal-footer {
+  padding: 20px 30px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-btn {
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.modal-btn.primary {
+  background: #007bff;
+  color: white;
+}
+
+.modal-btn.primary:hover {
+  background: #0056b3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+.modal-btn.secondary {
+  background: #f5f5f5;
+  color: #666;
+}
+
+.modal-btn.secondary:hover {
+  background: #e0e0e0;
+}
+
+/* Hover effect for company name in table */
+.company-info:hover .company-name {
+  color: #007bff;
+  text-decoration: underline;
+}
