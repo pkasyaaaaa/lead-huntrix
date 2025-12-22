@@ -92,6 +92,9 @@ const Sidebar = ({
     countries: []
   });
 
+  // State for expanded industries
+  const [expandedIndustries, setExpandedIndustries] = useState({});
+
   const [loadingFilters, setLoadingFilters] = useState({
     departments: false,
     seniority: false,
@@ -114,7 +117,131 @@ const Sidebar = ({
 
   // Departments, Seniority, and Company Sizes are now predefined - no need to fetch
 
-  // Load industries from imported JSON data
+  // State for showing industry tree
+  const [showIndustryTree, setShowIndustryTree] = useState(false);
+
+  // Industry tree component with checkboxes
+  const IndustryTree = () => {
+    const toggleMainIndustry = (mainIndustryName) => {
+      setExpandedIndustries(prev => ({
+        ...prev,
+        [mainIndustryName]: !prev[mainIndustryName]
+      }));
+    };
+
+    const handleMainIndustryCheck = (mainIndustryName, checked) => {
+      const currentIndustries = filters.industries || [];
+      const mainIndustryLabel = `${mainIndustryName} (Main)`;
+      
+      if (checked) {
+        // Add main industry if not already added
+        if (!currentIndustries.includes(mainIndustryLabel)) {
+          setFilters({
+            ...filters,
+            industries: [...currentIndustries, mainIndustryLabel]
+          });
+        }
+      } else {
+        // Remove main industry
+        setFilters({
+          ...filters,
+          industries: currentIndustries.filter(ind => ind !== mainIndustryLabel)
+        });
+      }
+    };
+
+    const handleSubIndustryCheck = (subIndustryName, checked) => {
+      const currentIndustries = filters.industries || [];
+      const subIndustryLabel = `${subIndustryName} (Sub)`;
+      
+      if (checked) {
+        // Add sub industry
+        if (!currentIndustries.includes(subIndustryLabel)) {
+          setFilters({
+            ...filters,
+            industries: [...currentIndustries, subIndustryLabel]
+          });
+        }
+      } else {
+        // Remove sub industry
+        setFilters({
+          ...filters,
+          industries: currentIndustries.filter(ind => ind !== subIndustryLabel)
+        });
+      }
+    };
+
+    const isMainIndustryChecked = (mainIndustryName) => {
+      return (filters.industries || []).includes(`${mainIndustryName} (Main)`);
+    };
+
+    const isSubIndustryChecked = (subIndustryName) => {
+      return (filters.industries || []).includes(`${subIndustryName} (Sub)`);
+    };
+
+    return (
+      <div className="industry-tree" style={{ 
+        maxHeight: '200px', 
+        overflowY: 'auto', 
+        border: '1px solid #e0e0e0', 
+        borderRadius: '4px', 
+        padding: '4px',
+        fontSize: '13px',
+        backgroundColor: '#fafafa'
+      }}>
+        {industryData.map((industry, index) => (
+          <div key={index} style={{ marginBottom: '2px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', padding: '2px 0' }}>
+              <button
+                onClick={() => toggleMainIndustry(industry.main_industry)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '0 2px',
+                  fontSize: '10px',
+                  width: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                {expandedIndustries[industry.main_industry] ? '▼' : '▶'}
+              </button>
+              <input
+                type="checkbox"
+                checked={isMainIndustryChecked(industry.main_industry)}
+                onChange={(e) => handleMainIndustryCheck(industry.main_industry, e.target.checked)}
+                style={{ marginRight: '6px', width: '14px', height: '14px', cursor: 'pointer' }}
+              />
+              <label style={{ cursor: 'pointer', fontSize: '12px', fontWeight: '500', flex: 1 }} onClick={() => toggleMainIndustry(industry.main_industry)}>
+                {industry.main_industry}
+              </label>
+            </div>
+            {expandedIndustries[industry.main_industry] && industry.sub_industries && (
+              <div style={{ marginLeft: '18px' }}>
+                {industry.sub_industries.map((subInd, subIndex) => (
+                  <div key={subIndex} style={{ display: 'flex', alignItems: 'center', padding: '2px 0' }}>
+                    <input
+                      type="checkbox"
+                      checked={isSubIndustryChecked(subInd.value)}
+                      onChange={(e) => handleSubIndustryCheck(subInd.value, e.target.checked)}
+                      style={{ marginRight: '6px', marginLeft: '16px', width: '14px', height: '14px', cursor: 'pointer' }}
+                    />
+                    <label style={{ cursor: 'pointer', fontSize: '11px', flex: 1 }}>
+                      {subInd.value}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // Load industries from imported JSON data (no longer needed for flat list, but keep for reference)
   useEffect(() => {
     try {
       console.log('Loading industries from imported data');
@@ -207,16 +334,20 @@ const Sidebar = ({
       console.log('ChipInput - datalistOptions:', datalistOptions);
       console.log('ChipInput - inputValue:', inputValue);
       
-      if (datalistOptions && datalistOptions.length > 0 && inputValue.trim()) {
-        const filtered = datalistOptions.filter(option =>
-          option.toLowerCase().includes(inputValue.toLowerCase())
-        );
-        console.log('Filtered suggestions:', filtered);
-        setFilteredSuggestions(filtered);
-        setShowSuggestions(filtered.length > 0);
+      if (datalistOptions && datalistOptions.length > 0) {
+        if (inputValue.trim()) {
+          // Filter based on input
+          const filtered = datalistOptions.filter(option =>
+            option.toLowerCase().includes(inputValue.toLowerCase())
+          );
+          console.log('Filtered suggestions:', filtered);
+          setFilteredSuggestions(filtered);
+        } else {
+          // Show all options when input is empty
+          setFilteredSuggestions(datalistOptions);
+        }
       } else {
         setFilteredSuggestions([]);
-        setShowSuggestions(false);
       }
     }, [inputValue, datalistOptions]);
 
@@ -252,7 +383,7 @@ const Sidebar = ({
       if (onFocus) {
         onFocus();
       }
-      if (datalistOptions && inputValue.trim()) {
+      if (datalistOptions && datalistOptions.length > 0) {
         setShowSuggestions(true);
       }
     };
@@ -292,8 +423,8 @@ const Sidebar = ({
           placeholder={placeholder}
         />
         {showSuggestions && filteredSuggestions.length > 0 && (
-          <div className="autocomplete-suggestions">
-            {filteredSuggestions.slice(0, 10).map((suggestion, index) => {
+          <div className="autocomplete-suggestions" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+            {filteredSuggestions.map((suggestion, index) => {
               // Check if suggestion has (Main) or (Sub) label
               const hasLabel = suggestion.includes('(Main)') || suggestion.includes('(Sub)');
               const mainText = hasLabel ? suggestion.replace(/\s*\((Main|Sub)\)/, '') : suggestion;
@@ -407,11 +538,48 @@ const Sidebar = ({
             <span className="icon"><i className="fas fa-industry"></i></span>
             <div className="filter-item-content">
               <label>Industry</label>
-              <ChipInput
-                filterKey="industries"
-                placeholder="Select industry"
-                datalistOptions={filterOptions.industries}
-              />
+              <div style={{ position: 'relative' }}>
+                {/* Display selected industries as chips */}
+                <div className="chip-container">
+                  {(filters.industries || []).map((industry, index) => {
+                    const isMain = industry.includes('(Main)');
+                    const isSub = industry.includes('(Sub)');
+                    const chipClass = isMain ? 'chip industry-main' : isSub ? 'chip industry-sub' : 'chip';
+                    const displayText = industry.replace(/\s*\((Main|Sub)\)/, '');
+                    
+                    return (
+                      <div key={index} className={chipClass}>
+                        {displayText}
+                        <span className="chip-delete" onClick={() => {
+                          setFilters({
+                            ...filters,
+                            industries: filters.industries.filter(ind => ind !== industry)
+                          });
+                        }}>
+                          <i className="fas fa-times"></i>
+                        </span>
+                      </div>
+                    );
+                  })}
+                  <input
+                    type="text"
+                    placeholder="Select industry"
+                    onFocus={() => setShowIndustryTree(true)}
+                    onBlur={() => setTimeout(() => setShowIndustryTree(false), 300)}
+                    readOnly
+                    style={{ cursor: 'pointer' }}
+                  />
+                </div>
+                {/* Show industry tree on focus */}
+                {showIndustryTree && (
+                  <div 
+                    style={{ position: 'absolute', zIndex: 1000, width: '100%', marginTop: '4px' }}
+                    onMouseDown={(e) => e.preventDefault()} // Prevent blur when clicking inside
+                  >
+                    <IndustryTree />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
