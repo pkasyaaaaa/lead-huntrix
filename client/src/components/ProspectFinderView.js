@@ -11,13 +11,14 @@ const ProspectFinderView = ({ filters, userId, showListView = false, triggerSear
   const [showResults, setShowResults] = useState(false);
   const [cachedFilters, setCachedFilters] = useState(null);
   const [lastTriggerSearch, setLastTriggerSearch] = useState(triggerSearch);
+  const [requestId, setRequestId] = useState(null);
 
   // Load cached results on mount
   useEffect(() => {
     const cached = localStorage.getItem('lusha_search_cache');
     if (cached) {
       try {
-        const { results, filters: savedFilters, timestamp } = JSON.parse(cached);
+        const { results, filters: savedFilters, timestamp, requestId: cachedRequestId } = JSON.parse(cached);
         // Cache expires after 24 hours
         const isExpired = Date.now() - timestamp > 24 * 60 * 60 * 1000;
         
@@ -25,6 +26,9 @@ const ProspectFinderView = ({ filters, userId, showListView = false, triggerSear
           console.log('Loading cached Lusha results:', results.length, 'prospects');
           setProspects(results);
           setCachedFilters(savedFilters);
+          if (cachedRequestId) {
+            setRequestId(cachedRequestId);
+          }
           setShowResults(true);
         }
       } catch (e) {
@@ -47,18 +51,18 @@ const ProspectFinderView = ({ filters, userId, showListView = false, triggerSear
     try {
       setLoading(true);
 
-      // Seniority mapping: display text -> Lusha ID
+      // Seniority mapping: display text -> Lusha ID (must be numbers, not strings)
       const SENIORITY_MAPPING = {
-        'Founder': '10',
-        'C-suite': '9',
-        'Vice President': '8',
-        'partner': '7',
-        'Director': '6',
-        'Manager': '5',
-        'Senior': '4',
-        'Entry': '3',
-        'Intern': '2',
-        'Other': '1'
+        'Founder': 10,
+        'C-suite': 9,
+        'Vice President': 8,
+        'partner': 7,
+        'Director': 6,
+        'Manager': 5,
+        'Senior': 4,
+        'Entry': 3,
+        'Intern': 2,
+        'Other': 1
       };
 
       // Build Lusha API filter object (exact format)
@@ -170,11 +174,18 @@ const ProspectFinderView = ({ filters, userId, showListView = false, triggerSear
         console.log('Setting prospects to:', response.data.data);
         setProspects(response.data.data);
         
+        // Store requestId for enrichment
+        if (response.data.requestId) {
+          setRequestId(response.data.requestId);
+          console.log('📋 Stored requestId:', response.data.requestId);
+        }
+        
         // Cache results to localStorage
         const cacheData = {
           results: response.data.data,
           filters: filters,
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          requestId: response.data.requestId
         };
         localStorage.setItem('lusha_search_cache', JSON.stringify(cacheData));
         setCachedFilters(filters);
@@ -228,6 +239,8 @@ const ProspectFinderView = ({ filters, userId, showListView = false, triggerSear
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         onSearch={handleSearch}
+        requestId={requestId}
+        userId={userId}
       />
     );
   }

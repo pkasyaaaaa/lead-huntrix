@@ -11,7 +11,7 @@ function App() {
   const [activeView, setActiveView] = useState('prospect-finder');
   const [sidebarClosed, setSidebarClosed] = useState(false);
   const [prospectFilterExpanded, setProspectFilterExpanded] = useState(true);
-  const [userId] = useState(1); // Default user ID
+  const [userId] = useState(2); // Default user ID
   const [triggerSearch, setTriggerSearch] = useState(false);
   const [filters, setFilters] = useState({
     jobTitles: [],

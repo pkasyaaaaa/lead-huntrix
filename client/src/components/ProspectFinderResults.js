@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './ProspectFinderResults.css';
 
-export default function ProspectFinderResults({ prospects, loading, onBack, onRefresh, searchQuery, setSearchQuery, onSearch }) {
+export default function ProspectFinderResults({ prospects, loading, onBack, onRefresh, searchQuery, setSearchQuery, onSearch, requestId, userId }) {
   const [selectedProspects, setSelectedProspects] = useState([]);
   const [enriching, setEnriching] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
@@ -17,33 +18,90 @@ export default function ProspectFinderResults({ prospects, loading, onBack, onRe
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedProspects(prospects.map(p => p.id));
+      // Use contactId from the raw prospect data for enrichment
+      setSelectedProspects(prospects.map(p => p.contactId));
     } else {
       setSelectedProspects([]);
     }
   };
 
-  const handleSelectProspect = (prospectId) => {
+  const handleSelectProspect = (contactId) => {
     setSelectedProspects(prev => {
-      if (prev.includes(prospectId)) {
-        return prev.filter(id => id !== prospectId);
+      if (prev.includes(contactId)) {
+        return prev.filter(id => id !== contactId);
       } else {
-        return [...prev, prospectId];
+        return [...prev, contactId];
       }
     });
   };
 
   const handleEnrichProspects = async () => {
-    // Placeholder for enrichment functionality
+    if (!requestId) {
+      alert('No requestId available. Please perform a new search first.');
+      return;
+    }
+    
+    if (selectedProspects.length === 0) {
+      alert('Please select at least one prospect to enrich.');
+      return;
+    }
+    
     setEnriching(true);
     console.log('Enriching prospects:', selectedProspects);
+    console.log('Using requestId:', requestId);
     
-    // TODO: Implement actual enrichment API call here
-    // For now, just show a placeholder message
-    setTimeout(() => {
-      alert('Enrichment feature coming soon! This will enrich the selected prospects with additional data.');
+    try {
+      const response = await axios.post('/api/lusha/enrich/contacts', {
+        requestId: requestId,
+        contactIds: selectedProspects,
+        userId: userId,
+        revealEmails: true, // Set to true to get email data
+        revealPhones: false  // Set to false to get phone data
+      });
+      
+      console.log('Enrichment response:', response.data);
+      
+      if (response.data.success) {
+        alert(
+          `✅ Enrichment Successful!\n\n` +
+          `Contacts saved: ${response.data.savedContacts}\n` +
+          `Companies saved: ${response.data.savedCompanies}\n` +
+          `Credits charged: ${response.data.creditsCharged}\n\n` +
+          `Data has been saved to your prospect list.`
+        );
+        
+        // Clear selection after successful enrichment
+        setSelectedProspects([]);
+      } else {
+        alert('❌ Enrichment failed. Please try again.');
+      }
+      
+    } catch (error) {
+      console.error('Error enriching prospects:', error);
+      console.error('Error response:', error.response);
+      console.error('Error response data:', error.response?.data);
+      
+      let errorMessage = 'Unknown error occurred';
+      
+      if (error.response?.data) {
+        // If error is an object, stringify it
+        if (typeof error.response.data.error === 'object') {
+          errorMessage = JSON.stringify(error.response.data.error, null, 2);
+        } else if (error.response.data.error) {
+          errorMessage = error.response.data.error;
+        } else if (error.response.data.message) {
+          errorMessage = error.response.data.message;
+        } else {
+          errorMessage = JSON.stringify(error.response.data, null, 2);
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      alert(`❌ Enrichment Error:\n\n${errorMessage}`);
+    } finally {
       setEnriching(false);
-    }, 1500);
+    }
   };
 
   const handleCompanyClick = (prospect) => {
@@ -153,13 +211,14 @@ export default function ProspectFinderResults({ prospects, loading, onBack, onRe
               <tbody>
                 {prospects.map((prospect) => {
                   const data = getProspectData(prospect);
+                  const contactId = prospect.contactId; // Use raw contactId for selection
                   return (
                     <tr key={data.id}>
                       <td className="checkbox-column">
                         <input 
                           type="checkbox"
-                          checked={selectedProspects.includes(data.id)}
-                          onChange={() => handleSelectProspect(data.id)}
+                          checked={selectedProspects.includes(contactId)}
+                          onChange={() => handleSelectProspect(contactId)}
                         />
                       </td>
                       <td>

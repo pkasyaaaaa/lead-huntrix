@@ -148,6 +148,44 @@ async function searchCompanies(filters, page = 0, size = 25) {
   }
 }
 
+// ============================================
+// ENRICHMENT ENDPOINT
+// ============================================
+
+/**
+ * Enrich contacts with full details
+ * @param {string} requestId - The requestId from the search response
+ * @param {Array<string>} contactIds - Array of contactIds to enrich
+ * @param {boolean} revealEmails - Whether to reveal emails (costs credits)
+ * @param {boolean} revealPhones - Whether to reveal phones (costs credits)
+ */
+async function enrichContacts(requestId, contactIds, revealEmails = false, revealPhones = false) {
+  try {
+    const requestBody = {
+      requestId: requestId,
+      contactIds: contactIds,
+      revealEmails: revealEmails,
+      revealPhones: revealPhones
+    };
+
+    console.log('\n' + '📊 LUSHA ENRICH REQUEST '.padEnd(80, '='));
+    console.log('Request Body:', JSON.stringify(requestBody, null, 2));
+    
+    const response = await lushaAPI.post('/prospecting/contact/enrich', requestBody);
+    
+    console.log('\n' + '✅ LUSHA ENRICH RESPONSE '.padEnd(80, '='));
+    console.log('Status:', response.status);
+    console.log('Credits Charged:', response.data.creditsCharged || 0);
+    console.log('Contacts Enriched:', response.data.contacts?.length || 0);
+    console.log('='.repeat(80) + '\n');
+    
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error('Error enriching contacts:', error.response?.data || error.message);
+    return { success: false, error: error.response?.data || error.message };
+  }
+}
+
 module.exports = {
   // Contact filters (still potentially useful)
   getContactDataPoints,
@@ -160,5 +198,8 @@ module.exports = {
   
   // Search (actively used)
   searchContacts,
-  searchCompanies
+  searchCompanies,
+  
+  // Enrichment
+  enrichContacts
 };

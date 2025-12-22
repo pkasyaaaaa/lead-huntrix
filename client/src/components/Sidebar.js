@@ -37,18 +37,18 @@ const Sidebar = ({
     'Sales'
   ];
 
-  // Seniority mapping: display text -> Lusha ID
+  // Seniority mapping: display text -> Lusha ID (must match ProspectFinderView.js)
   const SENIORITY_MAPPING = {
-    'C-suite': '10',
-    'Founder': '9',
-    'Partner': '8',
-    'Vice President': '7',
-    'Director': '6',
-    'Manager': '5',
-    'Senior': '4',
-    'Entry': '3',
-    'Intern': '2',
-    'Other': '1'
+    'Founder': 10,
+    'C-suite': 9,
+    'Vice President': 8,
+    'partner': 7,
+    'Director': 6,
+    'Manager': 5,
+    'Senior': 4,
+    'Entry': 3,
+    'Intern': 2,
+    'Other': 1
   };
 
   const PREDEFINED_SENIORITY = Object.keys(SENIORITY_MAPPING);
