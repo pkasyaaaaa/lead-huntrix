@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './ProspectFinderResults.css';
 
-export default function ProspectFinderResults({ prospects, loading, onBack, onRefresh, searchQuery, setSearchQuery, onSearch, requestId, userId }) {
+export default function ProspectFinderResults({ prospects, loading, onBack, onRefresh, searchQuery, setSearchQuery, onSearch, requestId, userId, searchType, setSearchType }) {
   const [selectedProspects, setSelectedProspects] = useState([]);
   const [enriching, setEnriching] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
@@ -131,6 +131,21 @@ export default function ProspectFinderResults({ prospects, loading, onBack, onRe
     };
   };
 
+  // Helper function to get company data
+  const getCompanyData = (company) => {
+    return {
+      id: company.id || Math.random().toString(),
+      name: company.name || 'N/A',
+      domain: company.fqdn || company.domain || 'N/A',
+      description: company.description || 'N/A',
+      logoUrl: company.logoUrl || null,
+      location: company.location || 'N/A',
+      hasEmployeesCount: company.hasCompanyEmployeesCount || false,
+      hasRevenue: company.hasCompanyRevenue || false,
+      hasIndustry: company.hasCompanyMainIndustry || false
+    };
+  };
+
   return (
     <div className="prospect-finder-view">
       <div className="search-container">
@@ -149,6 +164,51 @@ export default function ProspectFinderResults({ prospects, loading, onBack, onRe
         </div>
       </div>
 
+      {/* Tab Switcher */}
+      <div className="search-type-tabs" style={{ 
+        display: 'flex', 
+        gap: '8px', 
+        marginBottom: '16px',
+        borderBottom: '2px solid #e0e0e0'
+      }}>
+        <button
+          onClick={() => setSearchType('prospects')}
+          style={{
+            padding: '12px 24px',
+            border: 'none',
+            background: 'none',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: searchType === 'prospects' ? '600' : '400',
+            color: searchType === 'prospects' ? '#0066cc' : '#666',
+            borderBottom: searchType === 'prospects' ? '3px solid #0066cc' : 'none',
+            marginBottom: '-2px',
+            transition: 'all 0.2s'
+          }}
+        >
+          <i className="fas fa-users" style={{ marginRight: '8px' }}></i>
+          Prospects
+        </button>
+        <button
+          onClick={() => setSearchType('companies')}
+          style={{
+            padding: '12px 24px',
+            border: 'none',
+            background: 'none',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: searchType === 'companies' ? '600' : '400',
+            color: searchType === 'companies' ? '#0066cc' : '#666',
+            borderBottom: searchType === 'companies' ? '3px solid #0066cc' : 'none',
+            marginBottom: '-2px',
+            transition: 'all 0.2s'
+          }}
+        >
+          <i className="fas fa-building" style={{ marginRight: '8px' }}></i>
+          Companies
+        </button>
+      </div>
+
       <div className="prospect-results">
       {loading ? (
         <div style={{ marginTop: '40px', textAlign: 'center' }}>
@@ -160,15 +220,17 @@ export default function ProspectFinderResults({ prospects, loading, onBack, onRe
           <div className="results-header">
             <h3>Total Found: {prospects.length}</h3>
             <div className="header-actions">
-              <button 
-                className="add-to-list-btn"
-                onClick={handleEnrichProspects}
-                disabled={selectedProspects.length === 0 || enriching}
-                title="Enrich selected prospects with additional data"
-              >
-                <i className={enriching ? "fas fa-spinner fa-spin" : "fas fa-sparkles"}></i> 
-                {enriching ? ' Enriching...' : ' Enrich Selected'}
-              </button>
+              {searchType === 'prospects' && (
+                <button 
+                  className="add-to-list-btn"
+                  onClick={handleEnrichProspects}
+                  disabled={selectedProspects.length === 0 || enriching}
+                  title="Enrich selected prospects with additional data"
+                >
+                  <i className={enriching ? "fas fa-spinner fa-spin" : "fas fa-sparkles"}></i> 
+                  {enriching ? ' Enriching...' : ' Enrich Selected'}
+                </button>
+              )}
               <button 
                 className="download-btn" 
                 onClick={onRefresh}
@@ -184,11 +246,6 @@ export default function ProspectFinderResults({ prospects, loading, onBack, onRe
             </div>
           </div>
 
-          <div className="tabs-container">
-            <button className="tab-btn active">Prospect</button>
-            <button className="tab-btn">Companies</button>
-          </div>
-
           <div className="prospect-table-container">
             <table className="prospect-table">
               <thead>
@@ -200,92 +257,154 @@ export default function ProspectFinderResults({ prospects, loading, onBack, onRe
                       onChange={handleSelectAll}
                     />
                   </th>
-                  <th>Name</th>
-                  <th>Position</th>
-                  <th>Company</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Location</th>
+                  {searchType === 'prospects' ? (
+                    <>
+                      <th>Name</th>
+                      <th>Position</th>
+                      <th>Company</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                      <th>Location</th>
+                    </>
+                  ) : (
+                    <>
+                      <th>Company Name</th>
+                      <th>Domain</th>
+                      <th>Description</th>
+                      <th>Location</th>
+                    </>
+                  )}
                 </tr>
               </thead>
               <tbody>
-                {prospects.map((prospect) => {
-                  const data = getProspectData(prospect);
-                  const contactId = prospect.contactId; // Use raw contactId for selection
-                  return (
-                    <tr key={data.id}>
-                      <td className="checkbox-column">
-                        <input 
-                          type="checkbox"
-                          checked={selectedProspects.includes(contactId)}
-                          onChange={() => handleSelectProspect(contactId)}
-                        />
-                      </td>
-                      <td>
-                        <div className="prospect-name">
-                          <div className="avatar">
-                            <img
-                              src={"https://ui-avatars.com/api/?name=" + encodeURIComponent(data.name) + "&size=40&background=ddd&color=555"} 
-                              alt={data.name}
-                              className="avatar-img"
-                            />
-                          </div>
-                          <div>
-                            <div className="name-text">{data.name}</div>
-                            {data.linkedinUrl && (
-                              <a href={data.linkedinUrl} target="_blank" rel="noopener noreferrer" className="linkedin-link">
-                                <i className="fab fa-linkedin"></i>
-                              </a>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td>{data.jobTitle}</td>
-                      <td>
-                        <div className="company-info" onClick={() => handleCompanyClick(prospect)} style={{ cursor: 'pointer' }}>
-                          {data.companyLogo && (
-                            <div className="company-logo">
+                {searchType === 'prospects' ? (
+                  prospects.map((prospect) => {
+                    const data = getProspectData(prospect);
+                    const contactId = prospect.contactId;
+                    return (
+                      <tr key={data.id}>
+                        <td className="checkbox-column">
+                          <input 
+                            type="checkbox"
+                            checked={selectedProspects.includes(contactId)}
+                            onChange={() => handleSelectProspect(contactId)}
+                          />
+                        </td>
+                        <td>
+                          <div className="prospect-name">
+                            <div className="avatar">
                               <img
-                                src={data.companyLogo}
-                                alt={data.companyName}
-                                className="company-logo-img"
-                                onError={(e) => {
-                                  e.target.src = "https://ui-avatars.com/api/?name=" + encodeURIComponent(data.companyName) + "&size=40&background=ddd&color=555";
-                                }}
+                                src={"https://ui-avatars.com/api/?name=" + encodeURIComponent(data.name) + "&size=40&background=ddd&color=555"} 
+                                alt={data.name}
+                                className="avatar-img"
                               />
                             </div>
+                            <div>
+                              <div className="name-text">{data.name}</div>
+                              {data.linkedinUrl && (
+                                <a href={data.linkedinUrl} target="_blank" rel="noopener noreferrer" className="linkedin-link">
+                                  <i className="fab fa-linkedin"></i>
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td>{data.jobTitle}</td>
+                        <td>
+                          <div className="company-info" onClick={() => handleCompanyClick(prospect)} style={{ cursor: 'pointer' }}>
+                            {data.companyLogo && (
+                              <div className="company-logo">
+                                <img
+                                  src={data.companyLogo}
+                                  alt={data.companyName}
+                                  className="company-logo-img"
+                                  onError={(e) => {
+                                    e.target.src = "https://ui-avatars.com/api/?name=" + encodeURIComponent(data.companyName) + "&size=40&background=ddd&color=555";
+                                  }}
+                                />
+                              </div>
+                            )}
+                            <div>
+                              <div className="company-name" title="Click to view company details">{data.companyName}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          {data.email ? (
+                            <a href={`mailto:${data.email}`}>{data.email}</a>
+                          ) : data.hasEmail ? (
+                            <div className="locked-field" title="Email available - click Enrich to reveal">
+                              <i className="fas fa-lock"></i> Available
+                            </div>
+                          ) : (
+                            <span style={{ color: '#999' }}>Not available</span>
                           )}
-                          <div>
-                            <div className="company-name" title="Click to view company details">{data.companyName}</div>
+                        </td>
+                        <td>
+                          {data.phone ? (
+                            <span>{data.phone}</span>
+                          ) : (data.hasPhone || data.hasDirectPhone) ? (
+                            <div className="locked-field" title="Phone available - click Enrich to reveal">
+                              <i className="fas fa-lock"></i> Available
+                            </div>
+                          ) : (
+                            <span style={{ color: '#999' }}>Not available</span>
+                          )}
+                        </td>
+                        <td>{data.location}</td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  prospects.map((company) => {
+                    const data = getCompanyData(company);
+                    return (
+                      <tr key={data.id}>
+                        <td className="checkbox-column">
+                          <input 
+                            type="checkbox"
+                            checked={selectedProspects.includes(data.id)}
+                            onChange={() => handleSelectProspect(data.id)}
+                          />
+                        </td>
+                        <td>
+                          <div className="company-info" onClick={() => handleCompanyClick(company)} style={{ cursor: 'pointer' }}>
+                            {data.logoUrl && (
+                              <div className="company-logo">
+                                <img
+                                  src={data.logoUrl}
+                                  alt={data.name}
+                                  className="company-logo-img"
+                                  onError={(e) => {
+                                    e.target.src = "https://ui-avatars.com/api/?name=" + encodeURIComponent(data.name) + "&size=40&background=ddd&color=555";
+                                  }}
+                                />
+                              </div>
+                            )}
+                            <div>
+                              <div className="company-name" title="Click to view company details">{data.name}</div>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td>
-                        {data.email ? (
-                          <a href={`mailto:${data.email}`}>{data.email}</a>
-                        ) : data.hasEmail ? (
-                          <div className="locked-field" title="Email available - click Enrich to reveal">
-                            <i className="fas fa-lock"></i> Available
+                        </td>
+                        <td>
+                          {data.domain !== 'N/A' ? (
+                            <a href={`https://${data.domain}`} target="_blank" rel="noopener noreferrer">
+                              {data.domain}
+                            </a>
+                          ) : (
+                            <span style={{ color: '#999' }}>N/A</span>
+                          )}
+                        </td>
+                        <td>
+                          <div style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={data.description}>
+                            {data.description}
                           </div>
-                        ) : (
-                          <span style={{ color: '#999' }}>Not available</span>
-                        )}
-                      </td>
-                      <td>
-                        {data.phone ? (
-                          <span>{data.phone}</span>
-                        ) : (data.hasPhone || data.hasDirectPhone) ? (
-                          <div className="locked-field" title="Phone available - click Enrich to reveal">
-                            <i className="fas fa-lock"></i> Available
-                          </div>
-                        ) : (
-                          <span style={{ color: '#999' }}>Not available</span>
-                        )}
-                      </td>
-                      <td>{data.location}</td>
-                    </tr>
-                  );
-                })}
+                        </td>
+                        <td>{data.location}</td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
             </table>
           </div>
@@ -309,31 +428,31 @@ export default function ProspectFinderResults({ prospects, loading, onBack, onRe
             </button>
             
             <div className="modal-header">
-              {selectedCompany.logoUrl && (
+              {(selectedCompany.logoUrl || selectedCompany.company?.logoUrl) && (
                 <img
-                  src={selectedCompany.logoUrl}
-                  alt={selectedCompany.companyName}
+                  src={selectedCompany.logoUrl || selectedCompany.company?.logoUrl}
+                  alt={selectedCompany.name || selectedCompany.companyName}
                   className="modal-company-logo"
                   onError={(e) => {
-                    e.target.src = "https://ui-avatars.com/api/?name=" + encodeURIComponent(selectedCompany.companyName) + "&size=80&background=ddd&color=555";
+                    e.target.src = "https://ui-avatars.com/api/?name=" + encodeURIComponent(selectedCompany.name || selectedCompany.companyName) + "&size=80&background=ddd&color=555";
                   }}
                 />
               )}
               <div>
-                <h2>{selectedCompany.companyName}</h2>
-                {selectedCompany.fqdn && (
-                  <a href={`https://${selectedCompany.fqdn}`} target="_blank" rel="noopener noreferrer" className="company-website">
-                    <i className="fas fa-globe"></i> {selectedCompany.fqdn}
+                <h2>{selectedCompany.name || selectedCompany.companyName}</h2>
+                {(selectedCompany.fqdn || selectedCompany.domain) && (
+                  <a href={`https://${selectedCompany.fqdn || selectedCompany.domain}`} target="_blank" rel="noopener noreferrer" className="company-website">
+                    <i className="fas fa-globe"></i> {selectedCompany.fqdn || selectedCompany.domain}
                   </a>
                 )}
               </div>
             </div>
 
             <div className="modal-body">
-              {selectedCompany.companyDescription && (
+              {(selectedCompany.companyDescription || selectedCompany.description) && (
                 <div className="modal-section">
                   <h3><i className="fas fa-info-circle"></i> Description</h3>
-                  <p>{selectedCompany.companyDescription}</p>
+                  <p>{selectedCompany.companyDescription || selectedCompany.description}</p>
                 </div>
               )}
 
@@ -382,10 +501,10 @@ export default function ProspectFinderResults({ prospects, loading, onBack, onRe
               <div className="modal-section">
                 <h3><i className="fas fa-id-badge"></i> Company IDs</h3>
                 <div className="company-ids">
-                  {selectedCompany.companyId && (
+                  {(selectedCompany.companyId || selectedCompany.id) && (
                     <div className="id-item">
                       <span className="id-label">Company ID:</span>
-                      <span className="id-value">{selectedCompany.companyId}</span>
+                      <span className="id-value">{selectedCompany.companyId || selectedCompany.id}</span>
                     </div>
                   )}
                 </div>

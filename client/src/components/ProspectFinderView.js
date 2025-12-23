@@ -4,7 +4,7 @@ import ProspectFinderSearch from './ProspectFinderSearch';
 import ProspectFinderResults from './ProspectFinderResults';
 import industryData from '../data/industryData.json';
 
-const ProspectFinderView = ({ filters, userId, showListView = false, triggerSearch = false }) => {
+const ProspectFinderView = ({ filters, userId, showListView = false, triggerSearch = false, searchType, setSearchType }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [prospects, setProspects] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -13,9 +13,10 @@ const ProspectFinderView = ({ filters, userId, showListView = false, triggerSear
   const [lastTriggerSearch, setLastTriggerSearch] = useState(triggerSearch);
   const [requestId, setRequestId] = useState(null);
 
-  // Load cached results on mount
+  // Load cached results on mount and when searchType changes
   useEffect(() => {
-    const cached = localStorage.getItem('lusha_search_cache');
+    const cacheKey = searchType === 'prospects' ? 'lusha_prospects_cache' : 'lusha_companies_cache';
+    const cached = localStorage.getItem(cacheKey);
     if (cached) {
       try {
         const { results, filters: savedFilters, timestamp, requestId: cachedRequestId } = JSON.parse(cached);
@@ -23,27 +24,41 @@ const ProspectFinderView = ({ filters, userId, showListView = false, triggerSear
         const isExpired = Date.now() - timestamp > 24 * 60 * 60 * 1000;
         
         if (!isExpired && results && results.length > 0) {
-          console.log('Loading cached Lusha results:', results.length, 'prospects');
+          console.log(`Loading cached ${searchType} results:`, results.length, searchType);
           setProspects(results);
           setCachedFilters(savedFilters);
           if (cachedRequestId) {
             setRequestId(cachedRequestId);
           }
           setShowResults(true);
+        } else {
+          // No valid cache, clear results
+          setProspects([]);
+          setShowResults(false);
         }
       } catch (e) {
         console.error('Error loading cache:', e);
-        localStorage.removeItem('lusha_search_cache');
+        localStorage.removeItem(cacheKey);
+        setProspects([]);
+        setShowResults(false);
       }
+    } else {
+      // No cache for this search type
+      setProspects([]);
+      setShowResults(false);
     }
-  }, []);
+  }, [searchType]);
 
   // Only trigger search when triggerSearch value actually changes
   useEffect(() => {
     if (triggerSearch !== lastTriggerSearch) {
       setLastTriggerSearch(triggerSearch);
       setShowResults(true);
-      fetchProspects();
+      if (searchType === 'prospects') {
+        fetchProspects();
+      } else {
+        fetchCompanies();
+      }
     }
   }, [triggerSearch]);
 
@@ -153,10 +168,11 @@ const ProspectFinderView = ({ filters, userId, showListView = false, triggerSear
         lushaFilters.contacts.include.searchText = searchQuery;
       }
 
-      console.log('Sending Lusha request:', JSON.stringify({ filters: lushaFilters, page: 0, size: 25 }, null, 2));
+      console.log('Sending Lusha request:', JSON.stringify({ includePartialContact: true, filters: lushaFilters, page: 0, size: 25 }, null, 2));
 
       // Call Lusha API through our backend
       const response = await axios.post('/api/lusha/search/contacts', {
+        includePartialContact: true,
         filters: lushaFilters,
         page: 0,
         size: 25
@@ -187,7 +203,7 @@ const ProspectFinderView = ({ filters, userId, showListView = false, triggerSear
           timestamp: Date.now(),
           requestId: response.data.requestId
         };
-        localStorage.setItem('lusha_search_cache', JSON.stringify(cacheData));
+        localStorage.setItem('lusha_prospects_cache', JSON.stringify(cacheData));
         setCachedFilters(filters);
         console.log('💾 Cached', response.data.data.length, 'prospects to localStorage');
       } else {
@@ -203,16 +219,134 @@ const ProspectFinderView = ({ filters, userId, showListView = false, triggerSear
     }
   };
 
+  const fetchCompanies = async () => {
+    try {
+      setLoading(true);
+
+      // Build Lusha API filter object for companies
+      const lushaFilters = {
+        companies: {
+          include: {}
+        }
+      };
+
+      if (filters.companyNames && filters.companyNames.length > 0) {
+        lushaFilters.companies.include.names = filters.companyNames;
+      }
+      
+      if (filters.locations && filters.locations.length > 0) {
+        lushaFilters.companies.include.locations = filters.locations.map(loc => ({
+          country: loc
+        }));
+      }
+      
+      if (filters.industries && filters.industries.length > 0) {
+        const mainIndustryIds = [];
+        const subIndustryIds = [];
+        
+        filters.industries.forEach(industry => {
+          const industryName = industry.replace(/\s*\((Main|Sub)\)/, '');
+          const isMain = industry.includes('(Main)');
+          
+          if (isMain) {
+            const mainInd = industryData.find(item => item.main_industry === industryName);
+            if (mainInd) {
+              mainIndustryIds.push(mainInd.main_industry_id);
+            }
+          } else {
+            industryData.forEach(mainInd => {
+              const subInd = mainInd.sub_industries?.find(sub => sub.value === industryName);
+              if (subInd) {
+                subIndustryIds.push(subInd.id);
+              }
+            });
+          }
+        });
+        
+        if (mainIndustryIds.length > 0) {
+          lushaFilters.companies.include.mainIndustriesIds = mainIndustryIds;
+        }
+        if (subIndustryIds.length > 0) {
+          lushaFilters.companies.include.subIndustriesIds = subIndustryIds;
+        }
+      }
+      
+      if (filters.companySizes && filters.companySizes.length > 0) {
+        lushaFilters.companies.include.sizes = filters.companySizes;
+      }
+      
+      if (filters.companyRevenues && filters.companyRevenues.length > 0) {
+        lushaFilters.companies.include.revenues = filters.companyRevenues;
+      }
+      
+      if (searchQuery) {
+        lushaFilters.companies.include.searchText = searchQuery;
+      }
+
+      console.log('Sending Lusha company search request:', JSON.stringify({ includePartialContact: true, filters: lushaFilters, page: 0, size: 25 }, null, 2));
+
+      const response = await axios.post('/api/lusha/search/companies', {
+        includePartialContact: true,
+        filters: lushaFilters,
+        page: 0,
+        size: 25
+      });
+
+      console.log('=== LUSHA COMPANY RESPONSE DEBUG ===');
+      console.log('Full response:', response);
+      console.log('Response data:', response.data);
+
+      if (response.data && response.data.data && Array.isArray(response.data.data)) {
+        console.log('Setting companies to:', response.data.data);
+        setProspects(response.data.data); // Reusing prospects state for companies
+        
+        if (response.data.requestId) {
+          setRequestId(response.data.requestId);
+          console.log('📋 Stored requestId:', response.data.requestId);
+        }
+        
+        const cacheData = {
+          results: response.data.data,
+          filters: filters,
+          timestamp: Date.now(),
+          requestId: response.data.requestId,
+          searchType: 'companies'
+        };
+        localStorage.setItem('lusha_companies_cache', JSON.stringify(cacheData));
+        setCachedFilters(filters);
+        console.log('💾 Cached', response.data.data.length, 'companies to localStorage');
+      } else {
+        console.log('No companies found in response, setting empty array');
+        setProspects([]);
+      }
+      console.log('=== END DEBUG ===');
+    } catch (error) {
+      console.error('Error fetching companies from Lusha:', error);
+      setProspects([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSearch = () => {
     setShowResults(true);
-    fetchProspects();
+    if (searchType === 'prospects') {
+      fetchProspects();
+    } else {
+      fetchCompanies();
+    }
   };
 
   const handleRefresh = () => {
     console.log('🔄 Forcing refresh - clearing cache');
-    localStorage.removeItem('lusha_search_cache');
+    const cacheKey = searchType === 'prospects' ? 'lusha_prospects_cache' : 'lusha_companies_cache';
+    localStorage.removeItem(cacheKey);
     setCachedFilters(null);
-    fetchProspects();
+    if (searchType === 'prospects') {
+      fetchProspects();
+    } else {
+      fetchCompanies();
+    }
   };
 
   const handleSuggestionClick = (suggestion) => {
@@ -233,6 +367,8 @@ const ProspectFinderView = ({ filters, userId, showListView = false, triggerSear
     return (
       <ProspectFinderResults
         prospects={prospects}
+        searchType={searchType}
+        setSearchType={setSearchType}
         loading={loading}
         onBack={handleBackToSearch}
         onRefresh={handleRefresh}

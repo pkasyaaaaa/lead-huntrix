@@ -12,7 +12,8 @@ const Sidebar = ({
   filters,
   setFilters,
   userId,
-  onSearch
+  onSearch,
+  searchType
 }) => {
   const FULL_LOGO_SRC = '/image/logo.png';
   const SIDE_LOGO_SRC = '/image/side_logo.png';
@@ -477,41 +478,47 @@ const Sidebar = ({
             maxHeight: prospectFilterExpanded && !sidebarClosed ? '500px' : '0'
           }}
         >
-          <div className="filter-item">
-            <span className="icon"><i className="fas fa-user-tie"></i></span>
-            <div className="filter-item-content">
-              <label>Job title</label>
-              <ChipInput
-                filterKey="jobTitles"
-                placeholder="Enter one or more job titles"
-              />
-            </div>
-          </div>
+          {/* Prospect-specific filters - only show when searchType is 'prospects' */}
+          {searchType === 'prospects' && (
+            <>
+              <div className="filter-item">
+                <span className="icon"><i className="fas fa-user-tie"></i></span>
+                <div className="filter-item-content">
+                  <label>Job title</label>
+                  <ChipInput
+                    filterKey="jobTitles"
+                    placeholder="Enter one or more job titles"
+                  />
+                </div>
+              </div>
 
-          <div className="filter-item">
-            <span className="icon"><i className="fas fa-sitemap"></i></span>
-            <div className="filter-item-content">
-              <label>Management Level (Seniority)</label>
-              <ChipInput
-                filterKey="managementLevels"
-                placeholder="Select management level"
-                datalistOptions={filterOptions.seniority}
-              />
-            </div>
-          </div>
+              <div className="filter-item">
+                <span className="icon"><i className="fas fa-sitemap"></i></span>
+                <div className="filter-item-content">
+                  <label>Management Level (Seniority)</label>
+                  <ChipInput
+                    filterKey="managementLevels"
+                    placeholder="Select management level"
+                    datalistOptions={filterOptions.seniority}
+                  />
+                </div>
+              </div>
 
-          <div className="filter-item">
-            <span className="icon"><i className="fas fa-object-group"></i></span>
-            <div className="filter-item-content">
-              <label>Department</label>
-              <ChipInput
-                filterKey="departments"
-                placeholder="Select department"
-                datalistOptions={filterOptions.departments}
-              />
-            </div>
-          </div>
+              <div className="filter-item">
+                <span className="icon"><i className="fas fa-object-group"></i></span>
+                <div className="filter-item-content">
+                  <label>Department</label>
+                  <ChipInput
+                    filterKey="departments"
+                    placeholder="Select department"
+                    datalistOptions={filterOptions.departments}
+                  />
+                </div>
+              </div>
+            </>
+          )}
 
+          {/* Common filters for both prospects and companies */}
           <div className="filter-item">
             <span className="icon"><i className="fas fa-map-marker-alt"></i></span>
             <div className="filter-item-content">

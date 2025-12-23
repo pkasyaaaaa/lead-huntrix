@@ -13,6 +13,7 @@ function App() {
   const [prospectFilterExpanded, setProspectFilterExpanded] = useState(true);
   const [userId] = useState(2); // Default user ID
   const [triggerSearch, setTriggerSearch] = useState(false);
+  const [searchType, setSearchType] = useState('prospects'); // 'prospects' or 'companies'
   const [filters, setFilters] = useState({
     jobTitles: [],
     locations: [],
@@ -70,11 +71,18 @@ function App() {
           setFilters={setFilters}
           userId={userId}
           onSearch={handleSearch}
+          searchType={searchType}
         />
         
         <div className="main-content">
           {activeView === 'prospect-finder' && (
-            <ProspectFinderView filters={filters} userId={userId} triggerSearch={triggerSearch} />
+            <ProspectFinderView 
+              filters={filters} 
+              userId={userId} 
+              triggerSearch={triggerSearch}
+              searchType={searchType}
+              setSearchType={setSearchType}
+            />
           )}
           {activeView === 'market-analysis' && (
             <MarketAnalysisView userId={userId} />
