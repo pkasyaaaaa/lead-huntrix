@@ -2,6 +2,55 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/database');
 
+// Login endpoint
+router.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({
+      success: false,
+      message: 'Username and password are required'
+    });
+  }
+
+  try {
+    // Query the users table
+    const query = 'SELECT user_id, username, email, password_hash FROM users WHERE username = $1';
+    const [users] = await db.query(query, [username]);
+
+    if (users.length === 0) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid username or password'
+      });
+    }
+
+    const user = users[0];
+
+    // Compare plain text password
+    if (user.password_hash !== password) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid username or password'
+      });
+    }
+
+    res.json({
+      success: true,
+      userId: user.user_id,
+      username: user.username,
+      email: user.email
+    });
+
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error during login'
+    });
+  }
+});
+
 // Get user by ID
 router.get('/:id', async (req, res) => {
   try {

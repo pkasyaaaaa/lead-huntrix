@@ -13,7 +13,9 @@ const Sidebar = ({
   setFilters,
   userId,
   onSearch,
-  searchType
+  searchType,
+  currentUser,
+  onLogout
 }) => {
   const FULL_LOGO_SRC = '/image/logo.png';
   const SIDE_LOGO_SRC = '/image/side_logo.png';
@@ -668,6 +670,45 @@ const Sidebar = ({
           <span>Your Prospect list</span>
           <span className="arrow"><i className="fas fa-chevron-right"></i></span>
         </div>
+        
+        {/* User info and logout */}
+        {currentUser && !sidebarClosed && (
+          <div className="user-info" style={{
+            borderTop: '1px solid #e0e0e0',
+            marginTop: '10px',
+            paddingTop: '10px'
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '8px 0'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <i className="fas fa-user-circle" style={{ fontSize: '20px', color: '#667eea' }}></i>
+                <span style={{ fontSize: '13px', fontWeight: '500', color: '#333' }}>{currentUser.username}</span>
+              </div>
+              <button
+                onClick={onLogout}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '4px 8px',
+                  color: '#999',
+                  fontSize: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+                title="Logout"
+              >
+                <i className="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <button className="toggle-btn" onClick={onToggleSidebar}>
